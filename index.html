@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'sha256-Etb57uP1WMwcuON4L8cPZ61730k2R1FdgrqWDGT+aQk='; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Dhananjay Singh Madaik · GIS &amp; Earth Observation</title>
+<meta name="description" content="Portfolio of Dhananjay Singh Madaik, MSc Geographical Information Science (Manchester) and BSc Forestry: landslide mapping, Landsat time series, UAV survey and census GIS.">
+<meta name="author" content="Dhananjay Singh Madaik">
+<meta name="theme-color" content="#6F4E37">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Dhananjay Singh Madaik · GIS &amp; Earth Observation">
+<meta property="og:description" content="Portfolio of Dhananjay Singh Madaik, MSc Geographical Information Science (Manchester) and BSc Forestry: landslide mapping, Landsat time series, UAV survey and census GIS.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%236F4E37'/%3E%3Cpath d='M8 44c10-6 16-2 24-8s14-4 24-10M8 52c12-6 18-1 26-7s12-3 22-8M8 36c8-5 14-3 20-8s12-6 28-9' fill='none' stroke='%23E5E4E2' stroke-width='2.4' stroke-linecap='round' opacity='.9'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/fraunces-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Fraunces";font-style:normal;font-weight:100 900;font-display:swap;src:url(fonts/fraunces-latin-opsz-normal.woff2) format("woff2-variations"),url(fonts/fraunces-latin-opsz-normal.woff2) format("woff2")}
+@font-face{font-family:"Fraunces";font-style:italic;font-weight:100 900;font-display:swap;src:url(fonts/fraunces-latin-opsz-italic.woff2) format("woff2-variations"),url(fonts/fraunces-latin-opsz-italic.woff2) format("woff2")}
+@font-face{font-family:"Instrument Sans";font-style:normal;font-weight:400 700;font-display:swap;src:url(fonts/instrument-sans-latin-wght-normal.woff2) format("woff2-variations"),url(fonts/instrument-sans-latin-wght-normal.woff2) format("woff2")}
+@font-face{font-family:"Instrument Sans";font-style:italic;font-weight:400 700;font-display:swap;src:url(fonts/instrument-sans-latin-wght-italic.woff2) format("woff2-variations"),url(fonts/instrument-sans-latin-wght-italic.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ibm-plex-mono-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/ibm-plex-mono-latin-500-normal.woff2) format("woff2")}
+/* Layout: a field-survey sheet. Alternating full-width bands (mocha hero, platinum work, loam experience,
+   platinum toolkit, mocha about, platinum contact, night footer) on a 1240px column. Serif headings carry the
+   voice; mono labels read like map marginalia (coordinates, EPSG codes, scale bars). Single deliberate theme. */
+:root{
+  --platinum:#E5E4E2;   /* light ground */
+  --paper:#F3F2F0;      /* cards on platinum */
+  --mocha:#6F4E37;      /* hero + about ground, headings on light */
+  --loam:#3B2A1F;       /* deep brown bands */
+  --night:#2A1D15;      /* footer, lightbox */
+  --bark:#2E2119;       /* body text on light */
+  --umber:#5E4F45;      /* secondary text on light */
+  --sand:#DCCFC3;       /* secondary text on mocha */
+  --dust:#C8BDB2;       /* secondary text on loam */
+  --cerulean:#007BA7;   /* the one accent: buttons */
+  --cerulean-ink:#006A90; /* links on light */
+  --sky:#9FD6EC;        /* links and highlights on brown */
+
+  --serif:"Fraunces",ui-serif,Georgia,"Times New Roman",serif;
+  --sans:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+
+  --wrap:1240px;
+  --gutter:clamp(16px,4vw,40px);
+  --band:clamp(4.5rem,9vw,8rem);
+  --r:10px;
+  --ease:cubic-bezier(.2,.7,.2,1);
+
+  /* surface tokens, swapped per band */
+  --bg:var(--platinum); --fg:var(--bark); --muted:var(--umber); --link:var(--cerulean-ink);
+  --hair:rgba(46,33,25,.16); --card:var(--paper);
+  color-scheme:light;
+}
+.on-mocha{--bg:var(--mocha);--fg:var(--platinum);--muted:var(--sand);--link:var(--sky);--hair:rgba(229,228,226,.22);--card:rgba(42,29,21,.28)}
+.on-loam{--bg:var(--loam);--fg:var(--platinum);--muted:var(--dust);--link:var(--sky);--hair:rgba(229,228,226,.16);--card:rgba(229,228,226,.05)}
+.on-night{--bg:var(--night);--fg:var(--platinum);--muted:var(--dust);--link:var(--sky);--hair:rgba(229,228,226,.14);--card:rgba(229,228,226,.04)}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--platinum);color:var(--bark);font-family:var(--sans);font-size:1.0625rem;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:clip}
+img{max-width:100%;height:auto;display:block}
+h1,h2,h3,h4,p,ul,ol,figure,blockquote,dl,dd{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:var(--link);text-underline-offset:.18em;text-decoration-thickness:1px}
+a:hover{text-decoration-thickness:2px}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--cerulean);outline-offset:3px;border-radius:3px}
+.on-mocha :focus-visible,.on-loam :focus-visible,.on-night :focus-visible{outline-color:var(--sky)}
+[hidden]{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-60px;z-index:100;background:var(--cerulean);color:#fff;padding:.6rem 1rem;border-radius:6px;text-decoration:none}
+.skip:focus{top:12px}
+[id]{scroll-margin-top:84px}
+
+/* ---------- primitives ---------- */
+.band{background:var(--bg);color:var(--fg);padding-block:var(--band)}
+.wrap{max-width:var(--wrap);margin-inline:auto;padding-inline:var(--gutter)}
+.label{font-family:var(--mono);font-size:.78rem;line-height:1.4;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.h2{font-family:var(--serif);font-weight:360;font-size:clamp(2.1rem,4.4vw,3.6rem);line-height:1.05;letter-spacing:-.02em;font-variation-settings:"opsz" 120;text-wrap:balance}
+.h2 em,.display em{font-style:italic;font-weight:320}
+.lead{font-size:clamp(1.0625rem,1.4vw,1.1875rem);line-height:1.6;color:var(--muted);max-width:62ch;text-wrap:pretty}
+.sec-head{display:grid;gap:1.1rem;margin-bottom:clamp(2.5rem,5vw,4rem)}
+.sec-head .label{display:flex;align-items:center;gap:.75rem}
+.sec-head .label::before{content:"";width:28px;height:1px;background:currentColor;opacity:.6}
+
+.btn{display:inline-flex;align-items:center;gap:.6rem;min-height:48px;padding:.75rem 1.35rem;border-radius:6px;border:1px solid transparent;font-family:var(--sans);font-weight:600;font-size:.95rem;letter-spacing:.01em;text-decoration:none;line-height:1.2;transition:background-color .2s,color .2s,border-color .2s,transform .2s var(--ease)}
+.btn svg{width:18px;height:18px;flex:none;transition:transform .25s var(--ease)}
+.btn:hover svg{transform:translate(2px,-2px)}
+.btn-primary{background:var(--cerulean);color:#fff}
+.btn-primary:hover{background:#00668B;text-decoration:none}
+.btn-ghost{background:transparent;color:var(--fg);border-color:currentColor}
+.btn-ghost:hover{background:var(--fg);color:var(--bg);text-decoration:none}
+.btn-sm{min-height:40px;padding:.5rem 1rem;font-size:.875rem}
+
+/* ---------- header ---------- */
+.site-head{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;color:var(--fg);background:rgba(229,228,226,.86);-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);border-bottom:1px solid transparent;transition:background-color .3s,border-color .3s,color .3s}
+.site-head.is-dark{--fg:var(--platinum);--muted:var(--sand);background:rgba(59,42,31,.82)}
+.site-head.is-stuck{border-bottom-color:var(--hair)}
+.site-head.is-dark.is-stuck{border-bottom-color:rgba(229,228,226,.14)}
+.head-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:72px}
+.wordmark{display:inline-flex;align-items:baseline;gap:.4rem;color:inherit;text-decoration:none;font-family:var(--serif);font-weight:420;font-size:1.25rem;letter-spacing:-.01em;white-space:nowrap}
+.wordmark em{font-style:italic;font-weight:320}
+.wordmark:hover{text-decoration:none}
+.nav{display:none}
+.nav ul{display:flex;gap:1.75rem}
+.nav a{color:inherit;text-decoration:none;font-size:.9375rem;font-weight:500;padding-block:.5rem;background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;transition:background-size .25s var(--ease)}
+.nav a:hover,.nav a[aria-current="true"]{background-size:100% 1px}
+.head-cta{display:flex;align-items:center;gap:.75rem}
+.menu-btn{display:inline-flex;align-items:center;gap:.5rem;min-height:44px;padding:.4rem .8rem;border:1px solid currentColor;border-radius:6px;background:transparent;font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase}
+.head-cta .btn{display:none}
+@media (min-width:960px){.nav{display:block}.menu-btn{display:none}.head-cta .btn{display:inline-flex}}
+.mobile-nav{border-top:1px solid var(--hair);padding-block:.5rem 1.25rem}
+.mobile-nav a{display:block;padding:.8rem 0;color:inherit;text-decoration:none;font-family:var(--serif);font-size:1.6rem;font-weight:360;border-bottom:1px solid var(--hair)}
+.mobile-nav .btn{margin-top:1rem;display:inline-flex;font-family:var(--sans);font-size:.95rem;border-bottom:0}
+@media (min-width:960px){.mobile-nav{display:none!important}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;padding-block:clamp(3.5rem,8vw,7rem) clamp(3rem,6vw,5rem)}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity 1.4s ease}
+.hero canvas.is-drawn{opacity:1}
+.hero .wrap{position:relative}
+.hero-grid{display:grid;gap:clamp(2.5rem,5vw,4rem);align-items:end}
+@media (min-width:1000px){.hero-grid{grid-template-columns:minmax(0,7fr) minmax(0,4.2fr)}}
+.hero .label{color:var(--sand);margin-bottom:1.5rem;display:flex;flex-wrap:wrap;gap:.35rem 1rem}
+.display{font-family:var(--serif);font-weight:330;font-size:clamp(2.6rem,6.3vw,5.6rem);line-height:1.02;letter-spacing:-.025em;font-variation-settings:"opsz" 144;text-wrap:balance;max-width:14ch}
+.hero .lead{color:var(--sand);margin-top:1.5rem;max-width:56ch}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:.85rem;margin-top:2.25rem}
+
+/* map-legend card */
+.legend{background:var(--platinum);color:var(--bark);border-radius:4px;padding:1.4rem 1.4rem 1.2rem;box-shadow:0 1px 0 rgba(0,0,0,.08),0 24px 48px -24px rgba(20,12,6,.55);border:1px solid rgba(46,33,25,.25)}
+.legend h2{font-family:var(--mono);font-size:.78rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--umber);padding-bottom:.75rem;border-bottom:1px solid rgba(46,33,25,.2);margin-bottom:.4rem}
+.legend li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:.85rem;align-items:center;padding:.7rem 0;border-bottom:1px dashed rgba(46,33,25,.18)}
+.legend li:last-child{border-bottom:0}
+.legend svg{width:30px;height:22px}
+.legend b{display:block;font-family:var(--serif);font-weight:420;font-size:1.5rem;line-height:1.05;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.legend span{display:block;font-size:.875rem;color:var(--umber);line-height:1.35}
+.legend .foot{display:flex;justify-content:space-between;align-items:end;gap:1rem;margin-top:.9rem;padding-top:.8rem;border-top:1px solid rgba(46,33,25,.2)}
+.scalebar{display:grid;gap:4px;font-family:var(--mono);font-size:.68rem;color:var(--umber)}
+.scalebar i{display:block;width:96px;height:6px;background:linear-gradient(90deg,var(--bark) 0 25%,transparent 25% 50%,var(--bark) 50% 75%,transparent 75%);border:1px solid var(--bark)}
+.northarrow{width:22px;height:30px;color:var(--bark)}
+.hero-margin{position:relative;margin-top:clamp(3rem,6vw,4.5rem);padding-top:1rem;border-top:1px solid rgba(229,228,226,.22);display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem 2rem}
+.hero-margin .label{margin:0;color:var(--sand)}
+
+/* ---------- work ---------- */
+.filters{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem}
+.chip{display:inline-flex;align-items:center;gap:.5rem;min-height:40px;padding:.4rem .85rem;border:1px solid var(--hair);border-radius:4px;background:var(--paper);font-family:var(--mono);font-size:.76rem;letter-spacing:.05em;text-transform:uppercase;color:var(--bark);transition:background-color .2s,border-color .2s,color .2s}
+.chip svg{width:16px;height:16px;flex:none}
+.chip small{font-size:inherit;color:var(--umber)}
+.chip:hover{border-color:var(--bark)}
+.chip[aria-pressed="true"]{background:var(--bark);color:var(--platinum);border-color:var(--bark)}
+.chip[aria-pressed="true"] small{color:var(--dust)}
+.count{margin-bottom:1.25rem}
+
+.card{position:relative;display:flex;flex-direction:column;min-width:0;background:var(--paper);border:1px solid var(--hair);border-radius:var(--r);overflow:hidden;transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .35s}
+.card:hover{transform:translateY(-3px);box-shadow:0 18px 40px -22px rgba(46,33,25,.45);border-color:rgba(46,33,25,.3)}
+.card .thumb{position:relative;aspect-ratio:4/3;overflow:hidden;background:#D9D4CE;border-bottom:1px solid var(--hair)}
+.card .thumb img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+.card:hover .thumb img{transform:scale(1.035)}
+.card .body{display:flex;flex-direction:column;gap:.75rem;padding:1.25rem 1.3rem 1.35rem;flex:1}
+.meta{display:flex;justify-content:space-between;gap:1rem;align-items:center}
+.meta .cat{display:inline-flex;align-items:center;gap:.45rem}
+.meta svg{width:15px;height:15px;flex:none}
+.card h3{font-family:var(--serif);font-weight:420;font-size:1.375rem;line-height:1.2;letter-spacing:-.01em;text-wrap:balance}
+.card h3 a{color:var(--bark);text-decoration:none}
+.card h3 a::after{content:"";position:absolute;inset:0;z-index:1}
+.card p{color:var(--umber);font-size:.975rem;line-height:1.55}
+.tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:auto;padding-top:.4rem}
+.tags li{font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;padding:.2rem .45rem;border:1px solid var(--hair);border-radius:3px;color:var(--umber);background:var(--platinum)}
+.open-hint{display:inline-flex;align-items:center;gap:.4rem;font-weight:600;font-size:.9rem;color:var(--cerulean-ink)}
+.open-hint svg{width:16px;height:16px;transition:transform .25s var(--ease)}
+.card:hover .open-hint svg{transform:translateX(3px)}
+
+.featured{display:grid;margin-bottom:1.5rem}
+.featured .thumb{aspect-ratio:4/3}
+.featured .thumb img{object-position:50% 60%}
+.featured .body{padding:clamp(1.4rem,3vw,2.4rem);gap:1rem}
+.featured h3{font-size:clamp(1.6rem,2.6vw,2.25rem);line-height:1.12}
+.featured .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem 1.5rem;padding-block:.5rem}
+.stats b{display:block;font-family:var(--serif);font-weight:380;font-size:clamp(1.7rem,2.6vw,2.2rem);line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stats span{display:block;font-size:.85rem;color:var(--umber);line-height:1.35;margin-top:.3rem}
+.featured-flag{position:absolute;left:12px;top:12px;z-index:3;font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;background:var(--bark);color:var(--platinum);padding:.3rem .55rem;border-radius:3px}
+@media (min-width:880px){.featured{grid-template-columns:minmax(0,5fr) minmax(0,6fr)}.featured .thumb{aspect-ratio:auto;min-height:100%;border-bottom:0;border-right:1px solid var(--hair)}}
+.grid{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr))}
+.empty{padding:2rem;border:1px dashed var(--hair);border-radius:var(--r);color:var(--umber)}
+
+/* ---------- experience ---------- */
+.xp{display:grid;gap:clamp(2.5rem,5vw,4rem)}
+@media (min-width:960px){.xp{grid-template-columns:minmax(0,4fr) minmax(0,8fr)}.xp .sec-head{position:sticky;top:110px;align-self:start;margin-bottom:0}}
+.role{display:grid;gap:.6rem 2rem;padding-block:1.75rem;border-top:1px solid var(--hair)}
+.role:last-child{border-bottom:1px solid var(--hair)}
+@media (min-width:700px){.role{grid-template-columns:150px minmax(0,1fr)}}
+.role h3{font-family:var(--serif);font-weight:400;font-size:1.45rem;line-height:1.2;letter-spacing:-.01em}
+.role .org{color:var(--muted);font-size:.95rem;margin-top:.2rem}
+.role ul{display:grid;gap:.55rem;margin-top:1rem}
+.role li{position:relative;padding-left:1.25rem;color:var(--fg);opacity:.94;font-size:.98rem;line-height:1.55}
+.role li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;border:1px solid var(--sky);transform:rotate(45deg)}
+
+/* ---------- toolkit ---------- */
+.kit{display:grid;gap:1.25rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.kit section{background:var(--paper);border:1px solid var(--hair);border-radius:var(--r);padding:1.4rem 1.4rem 1.5rem}
+.kit h3{font-family:var(--serif);font-weight:420;font-size:1.3rem;line-height:1.2;margin:.6rem 0 1rem}
+.kit .label svg{width:22px;height:22px;color:var(--mocha)}
+.kit li{padding:.5rem 0;border-top:1px dashed var(--hair);font-size:.95rem;line-height:1.45;display:flex;justify-content:space-between;gap:1rem}
+.kit li small{font-family:var(--mono);font-size:.68rem;letter-spacing:.04em;color:var(--umber);white-space:nowrap;align-self:center}
+
+/* ---------- about ---------- */
+.about-grid{display:grid;gap:clamp(2.5rem,5vw,4rem)}
+@media (min-width:960px){.about-grid{grid-template-columns:minmax(0,6fr) minmax(0,5fr)}}
+.about-copy p{font-size:clamp(1.0625rem,1.35vw,1.15rem);line-height:1.65;color:var(--fg);max-width:60ch}
+.about-copy p+p{margin-top:1.1rem}
+.about-copy p:first-of-type{font-family:var(--serif);font-weight:340;font-size:clamp(1.35rem,2.2vw,1.75rem);line-height:1.35;letter-spacing:-.01em}
+.edu{display:grid;gap:1rem}
+.edu article{background:var(--card);border:1px solid var(--hair);border-radius:var(--r);padding:1.25rem 1.35rem}
+.edu h3{font-family:var(--serif);font-weight:420;font-size:1.25rem;line-height:1.25;margin:.45rem 0 .3rem}
+.edu p{color:var(--muted);font-size:.93rem;line-height:1.5}
+.pub{border-left:2px solid var(--sky);padding:.25rem 0 .25rem 1.1rem}
+.pub cite{font-style:normal}
+.creds{display:grid;gap:2rem;margin-top:clamp(3rem,6vw,4.5rem);padding-top:2.25rem;border-top:1px solid var(--hair);grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}
+.creds h3{font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+.creds li{padding:.6rem 0;border-top:1px dashed var(--hair);font-size:.95rem;line-height:1.45}
+.creds li span{display:block;color:var(--muted);font-size:.85rem}
+
+/* ---------- contact ---------- */
+.contact-grid{display:grid;gap:2.5rem;align-items:end}
+@media (min-width:960px){.contact-grid{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}}
+.contact .h2{max-width:18ch}
+.contact-card{background:var(--paper);border:1px solid var(--hair);border-radius:var(--r);padding:1.5rem}
+.mail-row{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;margin:.6rem 0 1.25rem}
+.mail{font-family:var(--mono);font-size:1rem;color:var(--bark);overflow-wrap:anywhere;user-select:all}
+.copy{min-height:36px;padding:.35rem .75rem;border:1px solid var(--hair);border-radius:4px;background:var(--platinum);font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase}
+.copy:hover{border-color:var(--bark)}
+.contact-links{display:flex;flex-wrap:wrap;gap:.6rem}
+.contact-note{margin-top:1.25rem;font-size:.9rem;color:var(--umber)}
+
+/* ---------- footer ---------- */
+.site-foot{padding-block:3rem 2.5rem}
+.foot-row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1.5rem 2rem;align-items:baseline}
+.site-foot nav ul{display:flex;flex-wrap:wrap;gap:.4rem 1.5rem}
+.site-foot nav a{color:var(--fg);text-decoration:none;font-size:.93rem}
+.site-foot nav a:hover{text-decoration:underline}
+.attrib{margin-top:2rem;padding-top:1.25rem;border-top:1px solid var(--hair);display:grid;gap:.5rem;font-size:.82rem;color:var(--muted);line-height:1.55}
+
+/* ---------- case study dialog ---------- */
+dialog{padding:0;border:0;max-width:none;max-height:none}
+dialog::backdrop{background:rgba(42,29,21,.6)}
+.case{width:100%;height:100%;margin:0;background:var(--platinum);color:var(--bark);overflow:auto;overscroll-behavior:contain}
+.case[open]{animation:caseIn .35s var(--ease)}
+@keyframes caseIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.case-bar{position:sticky;top:0;z-index:2;background:rgba(229,228,226,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair);padding-top:env(safe-area-inset-top,0px)}
+.case-bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:64px}
+.case-bar .label{color:var(--umber)}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;min-width:44px;min-height:44px;padding:.4rem .75rem;border:1px solid var(--hair);border-radius:6px;background:var(--paper);font-size:.9rem;font-weight:600;color:var(--bark)}
+.icon-btn:hover{border-color:var(--bark)}
+.icon-btn svg{width:18px;height:18px}
+.case-nav{display:flex;gap:.5rem}
+.case-inner{padding-block:clamp(2rem,5vw,4rem) clamp(3rem,6vw,5rem)}
+.case-head{display:grid;gap:1.1rem;max-width:880px}
+.case-head h2{font-family:var(--serif);font-weight:360;font-size:clamp(2rem,4.6vw,3.5rem);line-height:1.06;letter-spacing:-.02em;font-variation-settings:"opsz" 120;text-wrap:balance}
+.case-head .lead{color:var(--umber)}
+.case-links{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.4rem}
+.case-meta{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem}
+.case-meta .label{white-space:nowrap}
+.case-hero{margin-top:clamp(2rem,4vw,3rem)}
+.case-stats{display:grid;gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:var(--r);overflow:hidden;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));margin-top:clamp(2rem,4vw,3rem)}
+.case-stats div{background:var(--paper);padding:1.1rem 1.2rem}
+.case-cols{display:grid;gap:clamp(2rem,4vw,3.5rem);margin-top:clamp(2.5rem,5vw,4rem)}
+@media (min-width:980px){.case-cols{grid-template-columns:minmax(0,8fr) minmax(0,4fr)}.case-side{position:sticky;top:90px;align-self:start}}
+.case-body{display:grid;gap:2.25rem;min-width:0}
+.case-body>*{min-width:0}
+.case-body h3{font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--umber);margin-bottom:.8rem;display:flex;align-items:center;gap:.6rem}
+.case-body h3::before{content:"";width:18px;height:1px;background:currentColor}
+.case-body p,.case-body li{font-size:1.02rem;line-height:1.65;max-width:68ch}
+.case-body .q{font-family:var(--serif);font-weight:360;font-size:clamp(1.25rem,2vw,1.55rem);line-height:1.35;letter-spacing:-.01em;max-width:40ch}
+.steps{counter-reset:s;display:grid;gap:.85rem}
+.steps li{counter-increment:s;display:grid;grid-template-columns:2.2rem minmax(0,1fr);gap:.6rem}
+.steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--mono);font-size:.8rem;color:var(--cerulean-ink);padding-top:.25rem}
+.findings{display:grid;gap:.7rem}
+.findings li{position:relative;padding-left:1.4rem}
+.findings li::before{content:"";position:absolute;left:0;top:.6em;width:8px;height:8px;background:var(--cerulean);transform:rotate(45deg)}
+.limits li{position:relative;padding-left:1.4rem;color:var(--umber)}
+.limits li+li{margin-top:.55rem}
+.limits li::before{content:"";position:absolute;left:0;top:.55em;width:9px;height:9px;border:1px solid var(--umber);border-radius:50%}
+.weights{display:grid;gap:.5rem;max-width:520px}
+.weights div{display:grid;grid-template-columns:118px minmax(0,1fr) 40px;gap:.75rem;align-items:center;font-size:.9rem}
+.weights i{display:block;height:10px;background:var(--mocha);border-radius:2px}
+.weights span:last-child{font-family:var(--mono);font-size:.8rem;text-align:right;font-variant-numeric:tabular-nums}
+.code{background:var(--night);color:#E9E2D9;border-radius:8px;padding:1rem 1.1rem;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.6;max-width:100%}
+.code .k{color:var(--sky)}.code .c{color:#B9ACA0}
+.case-side{display:grid;gap:1.25rem}
+.side-box{background:var(--paper);border:1px solid var(--hair);border-radius:var(--r);padding:1.2rem 1.25rem}
+.side-box h4{font-family:var(--mono);font-weight:500;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--umber);margin-bottom:.7rem}
+.side-box li{font-size:.92rem;line-height:1.45;padding:.4rem 0;border-top:1px dashed var(--hair)}
+.side-box li:first-child{border-top:0;padding-top:0}
+.side-box .btn{width:100%;justify-content:space-between}
+.side-box .btn+.btn{margin-top:.6rem}
+.side-box p{font-size:.9rem;color:var(--umber);line-height:1.5}
+.case-part{padding-top:2.5rem;border-top:1px solid var(--hair)}
+.case-part h4{font-family:var(--serif);font-weight:400;font-size:1.6rem;line-height:1.2;margin-bottom:.4rem}
+
+.figs{margin-top:clamp(3rem,6vw,4.5rem)}
+.figs>h3{font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--umber);margin-bottom:1.25rem}
+.fig-grid{columns:2 320px;column-gap:1.25rem}
+.fig{break-inside:avoid;margin-bottom:1.25rem}
+.fig button{display:block;width:100%;padding:0;border:1px solid var(--hair);border-radius:6px;background:#D9D4CE;overflow:hidden;position:relative}
+.fig button img,.card .thumb img{position:relative;z-index:1}
+.fig button.is-loaded,.card .thumb.is-loaded{background:#fff}
+/* placeholder behind each image: visible until the map has loaded */
+.fig button::before,.card .thumb::before{content:"Loading map…";position:absolute;inset:0;z-index:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--umber);background:repeating-linear-gradient(135deg,rgba(111,78,55,.07) 0 10px,transparent 10px 20px),#DDD8D2;background-size:28px 28px,auto;animation:mapWait 1.6s linear infinite}
+.fig button.is-loaded::before,.card .thumb.is-loaded::before{content:none}
+.fig button.is-error::before,.card .thumb.is-error::before{content:"Map didn’t load · tap to retry";animation:none;z-index:2;cursor:pointer}
+@keyframes mapWait{to{background-position:28px 0,0 0}}
+.fig button img{width:100%;transition:transform .6s var(--ease)}
+.fig button:hover img{transform:scale(1.02)}
+.fig button::after{content:"";position:absolute;right:10px;top:10px;width:34px;height:34px;border-radius:6px;background:rgba(42,29,21,.78) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E5E4E2' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6'/%3E%3Cpath d='M15 15l5 5M10.5 8v5M8 10.5h5'/%3E%3C/svg%3E") center/20px no-repeat;opacity:0;transition:opacity .2s}
+.fig button:hover::after,.fig button:focus-visible::after{opacity:1}
+.fig figcaption{font-size:.85rem;color:var(--umber);line-height:1.45;margin-top:.55rem}
+.case-foot{margin-top:clamp(3rem,6vw,4.5rem);padding-top:1.5rem;border-top:1px solid var(--hair);display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem}
+.case-foot .icon-btn{max-width:100%;text-align:left}
+.case-foot .icon-btn span{overflow:hidden;text-overflow:ellipsis}
+
+/* ---------- lightbox ---------- */
+.lightbox{width:100%;height:100%;margin:0;background:var(--night);color:var(--platinum);overflow:hidden}
+.lightbox[open]{display:flex;flex-direction:column}
+.lightbox::backdrop{background:var(--night)}
+.lb-stage{position:relative;flex:1;min-height:0;overflow:hidden;touch-action:none;cursor:grab;display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) 16px 16px}
+.lb-stage.is-dragging{cursor:grabbing}
+.lb-stage img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;transform-origin:center center;user-select:none;-webkit-user-drag:none;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.45);will-change:transform}
+.lb-bar{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.6rem 1rem;padding:.75rem var(--gutter) calc(.75rem + env(safe-area-inset-bottom,0px));background:rgba(42,29,21,.96);border-top:1px solid rgba(229,228,226,.12)}
+.lb-cap{flex:1 1 320px;min-width:0;font-size:.9rem;line-height:1.45;color:var(--platinum)}
+.lb-cap .label{color:var(--dust);display:block;margin-bottom:.2rem}
+.lb-tools{display:flex;gap:.4rem;flex-wrap:wrap}
+.lb-tools button{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border:1px solid rgba(229,228,226,.25);border-radius:6px;background:rgba(229,228,226,.06);color:var(--platinum)}
+.lb-tools button:hover{background:rgba(229,228,226,.14)}
+.lb-tools button:disabled{opacity:.35;cursor:not-allowed}
+.lb-tools svg{width:20px;height:20px}
+.lb-hint{animation:hintOut .5s 3s forwards;position:absolute;left:50%;top:16px;transform:translateX(-50%);font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--dust);background:rgba(42,29,21,.8);padding:.35rem .7rem;border-radius:4px;pointer-events:none}
+
+@media (max-width:560px){
+  .featured .stats{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .weights div{grid-template-columns:96px minmax(0,1fr) 36px;font-size:.84rem}
+  .lb-cap{font-size:.82rem}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+  .hero canvas{opacity:1}
+}
+
+@keyframes hintOut{to{opacity:0;visibility:hidden}}
+@media (max-width:600px){.case-bar .back span,#case-pos{display:none}.case-bar .wrap{min-height:58px}}
+.lb-loading{position:absolute;right:16px;top:16px;font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--platinum);background:rgba(0,123,167,.9);padding:.35rem .7rem;border-radius:4px;pointer-events:none}
+.case-head h2:focus{outline:none}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-head" id="site-head">
+  <div class="wrap head-row">
+    <a class="wordmark" href="#top">Dhananjay <em>Singh Madaik</em></a>
+    <nav class="nav" aria-label="Primary"><ul>
+      <li><a href="#work">Work</a></li><li><a href="#experience">Experience</a></li><li><a href="#toolkit">Toolkit</a></li><li><a href="#about">About</a></li><li><a href="#contact">Contact</a></li>
+    </ul></nav>
+    <div class="head-cta">
+      <a class="btn btn-primary btn-sm" href="#contact">Get in touch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+      <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav"><span id="menu-label">Menu</span></button>
+    </div>
+  </div>
+  <div class="wrap mobile-nav" id="mobile-nav" hidden>
+    <a href="#work">Work</a><a href="#experience">Experience</a><a href="#toolkit">Toolkit</a><a href="#about">About</a><a href="#contact">Contact</a>
+    <a class="btn btn-primary" href="#contact">Get in touch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+  </div>
+</header>
+
+<main id="main">
+<section class="band on-mocha hero" id="top" aria-labelledby="hero-title">
+  <canvas id="contours" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <p class="label"><span>GIS</span><span>·</span><span>Earth observation</span><span>·</span><span>UAV survey</span><span>·</span><span>Manchester, UK</span></p>
+        <h1 class="display" id="hero-title">Reading the land from <em>orbit, air and ground.</em></h1>
+        <p class="lead">I’m Dhananjay Singh Madaik, an MSc Geographical Information Science graduate from the University of Manchester with a forestry degree behind me. I map landslides, track vegetation change from satellites, survey woodland by drone and turn census data into evidence people can act on.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#work">See the work <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+          <a class="btn btn-ghost" href="#contact">Get in touch</a>
+        </div>
+      </div>
+      <aside class="legend" aria-label="Portfolio at a glance">
+        <h2>Legend · selected work</h2>
+        <ul>
+          <li><svg viewBox="0 0 30 22" aria-hidden="true"><path d="M3 15 9 4l7 3 6-3 5 9-7 6H8z" fill="#6F4E37" fill-opacity=".25" stroke="#6F4E37" stroke-width="1.3"/></svg><div><b>179</b><span>landslides hand-digitised along NH-5, Kinnaur</span></div></li>
+          <li><svg viewBox="0 0 30 22" aria-hidden="true"><defs><linearGradient id="lg-r" x1="0" x2="1"><stop offset="0" stop-color="#E5E4E2"/><stop offset=".5" stop-color="#C08A5B"/><stop offset="1" stop-color="#6F4E37"/></linearGradient></defs><rect x="1" y="5" width="28" height="12" fill="url(#lg-r)" stroke="#2E2119" stroke-width=".8"/></svg><div><b>2000–2024</b><span>Landsat NDVI record, Himachal Pradesh</span></div></li>
+          <li><svg viewBox="0 0 30 22" aria-hidden="true" fill="none" stroke="#007BA7" stroke-width="1.4"><circle cx="15" cy="11" r="6"/><path d="M15 1v6M15 15v6M5 11h6M19 11h6"/></svg><div><b>2</b><span>woodlands surveyed by UAV, Cornwall</span></div></li>
+          <li><svg viewBox="0 0 30 22" aria-hidden="true" fill="none" stroke="#2E2119" stroke-width=".9"><rect x="2" y="2" width="26" height="18"/><path d="M10.7 2v18M19.3 2v18M2 11h26"/><rect x="10.7" y="2" width="8.6" height="9" fill="#6F4E37" fill-opacity=".55" stroke="none"/></svg><div><b>12</b><span>LSOAs harmonised for a Manchester park study</span></div></li>
+        </ul>
+        <div class="foot">
+          <p class="label" style="color:var(--umber);margin:0">Source: my MSc, dissertation and placement work</p>
+          <svg class="northarrow" viewBox="0 0 22 30" aria-hidden="true"><path d="M11 1 19 25l-8-5-8 5z" fill="currentColor" fill-opacity=".85"/><path d="M11 1v19" stroke="#E5E4E2" stroke-width="1"/><text x="11" y="29.5" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor">N</text></svg>
+        </div>
+      </aside>
+    </div>
+    <div class="hero-margin">
+      <p class="label">Kafaur 31°34′N 77°50′E → Khab 31°48′N 78°38′E</p>
+      <p class="label">Background: generated contours, not real terrain</p>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="work" aria-labelledby="work-title">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">Selected work</p>
+      <h2 class="h2" id="work-title">Seven projects, <em>from Himalayan slopes to Manchester streets.</em></h2>
+      <p class="lead">Each case study sets out the question, the data, what I did, what I found and the limits, with every map at full size.</p>
+    </div>
+    <div class="filters" role="group" aria-label="Filter projects by theme"><button type="button" class="chip" data-filter="all" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="6.5" r="2.5"/><circle cx="6.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>All <small>7</small></button><button type="button" class="chip" data-filter="hazards" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 19.5 9 7l4 6.5 2.5-4 6 10z"/><path d="M9 7l1.4 2.6"/></svg>Hazards &amp; terrain <small>3</small></button><button type="button" class="chip" data-filter="rs" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="17" height="17"/><path d="M9.2 3.5v17M14.8 3.5v17M3.5 9.2h17M3.5 14.8h17"/><rect x="9.2" y="9.2" width="5.6" height="5.6" fill="currentColor" stroke="none"/><rect x="14.8" y="3.5" width="5.7" height="5.7" fill="currentColor" stroke="none" opacity=".45"/></svg>Satellite remote sensing <small>4</small></button><button type="button" class="chip" data-filter="survey" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="6"/><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg>UAV &amp; survey <small>1</small></button><button type="button" class="chip" data-filter="census" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6.5 11 3l9 4.5-1.5 11L9 21l-6-5z"/><path d="M5.5 15 15 5.8M8 18.5l10.6-9.7M3.8 11 11 4.2"/></svg>Urban &amp; census <small>2</small></button><button type="button" class="chip" data-filter="python" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M13.5 4l-3 16"/></svg>Python <small>1</small></button></div>
+    <p class="label count" id="work-count" aria-live="polite">Showing 7 projects</p>
+    <article class="card featured" data-tags="hazards rs"><div class="thumb"><span class=featured-flag>Dissertation</span><img src="thumbs/l-study.webp" width="636" height="900" alt="Figure 1. The Kafaur–Khab NH-5 corridor within Kinnaur District, on the 12.5 m ALOS DEM, with the 300, 600 and 1,000 m road buffers." loading="lazy" decoding="async" style="object-position:50% 62%"></div><div class="body"><div class="meta label"><span class="cat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 19.5 9 7l4 6.5 2.5-4 6 10z"/><path d="M9 7l1.4 2.6"/></svg>MSc dissertation</span><span>Sep 2026</span></div><h3><a href="#landslide" data-case="landslide">Landslides along the NH-5 Satluj corridor, Kinnaur</a></h3><p>Hand-mapped 179 landslides along a Himalayan highway, modelled relative susceptibility across 6,482 km² of Kinnaur, and measured the land and villages exposed.</p><div class="stats"><div><b>179</b><span>landslides hand-digitised in the 1 km corridor</span></div><div><b>57.0%</b><span>of them within 300 m of the road</span></div><div><b>91</b><span>village points inside the corridor</span></div><div><b>28.7%</b><span>of Kinnaur classed High or Very High susceptibility</span></div></div><ul class="tags"><li>ArcMap 10.3.1</li><li>Weighted overlay</li><li>ALOS DEM</li><li>Sentinel-2 LULC</li></ul><span class="open-hint" aria-hidden="true">Read the case study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span></div></article>
+    <div class="grid"><article class="card" data-tags="rs hazards"><div class="thumb"><img src="thumbs/n-period.webp" width="720" height="509" alt="Fig. 3. Year of strongest vegetation disturbance (LandTrendr NDVI), grouped into 2000–2004, 2005–2009, 2010–2014 and 2015–2023." loading="lazy" decoding="async" style="object-position:50% 55%"></div><div class="body"><div class="meta label"><span class="cat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="17" height="17"/><path d="M9.2 3.5v17M14.8 3.5v17M3.5 9.2h17M3.5 14.8h17"/><rect x="9.2" y="9.2" width="5.6" height="5.6" fill="currentColor" stroke="none"/><rect x="14.8" y="3.5" width="5.7" height="5.7" fill="currentColor" stroke="none" opacity=".45"/></svg>Landsat time series</span><span>Jan 2026</span></div><h3><a href="#ndvi" data-case="ndvi">Vegetation disturbance on steep Himalayan slopes, 2000–2024</a></h3><p>Used the Landsat archive and LandTrendr in Google Earth Engine to find when vegetation was lost on slopes of 30° or more, how slowly it recovered, and which districts carry the most stress.</p><ul class="tags"><li>Google Earth Engine</li><li>LandTrendr</li><li>Landsat</li><li>Sen’s slope</li></ul><span class="open-hint" aria-hidden="true">Read the case study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span></div></article><article class="card" data-tags="census"><div class="thumb"><img src="thumbs/p-mobility.webp" width="720" height="509" alt="Figure 8. Residents who moved in the year before Census Day 2021." loading="lazy" decoding="async" style="object-position:50% 50%"></div><div class="body"><div class="meta label"><span class="cat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6.5 11 3l9 4.5-1.5 11L9 21l-6-5z"/><path d="M5.5 15 15 5.8M8 18.5l10.6-9.7M3.8 11 11 4.2"/></svg>Research placement</span><span>Feb–Apr 2026</span></div><h3><a href="#westgorton" data-case="westgorton">Did new residents explain a park’s success? West Gorton, Manchester</a></h3><p>Harmonised 12 LSOAs and joined ONS, IMD and Census 2021 data to test whether rising park use could simply reflect people moving in. It almost certainly could not.</p><ul class="tags"><li>ArcGIS Pro</li><li>Census 2021</li><li>IMD 2025</li><li>ONS lookups</li></ul><span class="open-hint" aria-hidden="true">Read the case study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span></div></article><article class="card" data-tags="survey"><div class="thumb"><img src="thumbs/u-w1.webp" width="720" height="510" alt="Figure 1a. Canopy gaps in Woodland-1, the beaver-influenced site." loading="lazy" decoding="async" style="object-position:50% 50%"></div><div class="body"><div class="meta label"><span class="cat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="6"/><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg>UAV survey</span><span>Jan 2026</span></div><h3><a href="#uav" data-case="uav">Do beavers reshape the canopy? A UAV survey in Cornwall</a></h3><p>Flew a drone survey over two woodlands, built a height-above-ground model and measured every canopy gap to compare a beaver site with one without.</p><ul class="tags"><li>UAV</li><li>SfM</li><li>QGIS</li><li>EPSG:27700</li></ul><span class="open-hint" aria-hidden="true">Read the case study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span></div></article><article class="card" data-tags="census rs"><div class="thumb"><img src="thumbs/g-classified.webp" width="720" height="509" alt="Figure 3.4. Classified suitability for green intervention, five classes." loading="lazy" decoding="async" style="object-position:50% 50%"></div><div class="body"><div class="meta label"><span class="cat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6.5 11 3l9 4.5-1.5 11L9 21l-6-5z"/><path d="M5.5 15 15 5.8M8 18.5l10.6-9.7M3.8 11 11 4.2"/></svg>Suitability modelling</span><span>Jan 2026</span></div><h3><a href="#greenspace" data-case="greenspace">Where Greater Manchester needs green space most</a></h3><p>Combined green-space access, Sentinel-2 vegetation, deprivation and child population into one suitability model to show where interventions would help most.</p><ul class="tags"><li>ArcGIS Pro</li><li>MCDA</li><li>Sentinel-2 NDVI</li><li>Zonal statistics</li></ul><span class="open-hint" aria-hidden="true">Read the case study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span></div></article><article class="card" data-tags="rs hazards"><div class="thumb"><img src="thumbs/s-compare.webp" width="720" height="509" alt="Figure 3. The Sentinel-1 change mask from Earth Engine (magenta) against the official Copernicus flood delineation." loading="lazy" decoding="async" style="object-position:60% 50%"></div><div class="body"><div class="meta label"><span class="cat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="17" height="17"/><path d="M9.2 3.5v17M14.8 3.5v17M3.5 9.2h17M3.5 14.8h17"/><rect x="9.2" y="9.2" width="5.6" height="5.6" fill="currentColor" stroke="none"/><rect x="14.8" y="3.5" width="5.7" height="5.7" fill="currentColor" stroke="none" opacity=".45"/></svg>SAR flood mapping</span><span>Jun 2026</span></div><h3><a href="#valencia" data-case="valencia">Mapping the 2024 Valencia flood with Sentinel-1 radar</a></h3><p>Built a Sentinel-1 change-detection workflow in Google Earth Engine and tested it against the official Copernicus emergency flood map.</p><ul class="tags"><li>Google Earth Engine</li><li>Sentinel-1 SAR</li><li>Copernicus EMS</li></ul><span class="open-hint" aria-hidden="true">Read the case study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span></div></article><article class="card" data-tags="python"><div class="thumb"><img src="thumbs/t-final.webp" width="720" height="397" alt="Figure 4. Final weighted redistribution surface (w = 50, s = 0.05)." loading="lazy" decoding="async" style="object-position:42% 50%"></div><div class="body"><div class="meta label"><span class="cat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M13.5 4l-3 16"/></svg>Python</span><span>Nov 2025 – Jan 2026</span></div><h3><a href="#python" data-case="python">Spatial algorithms in Python</a></h3><p>Two algorithms written from scratch: one finds the world’s shortest international border, the other removes false hotspots from district-geocoded tweets.</p><ul class="tags"><li>GeoPandas</li><li>Shapely</li><li>pyproj</li><li>rasterio</li></ul><span class="open-hint" aria-hidden="true">Read the case study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span></div></article></div>
+    <p class="empty" id="work-empty" hidden>No projects match this filter.</p>
+  </div>
+</section>
+
+<section class="band on-loam" id="experience" aria-labelledby="xp-title">
+  <div class="wrap xp">
+    <div class="sec-head">
+      <p class="label">Experience</p>
+      <h2 class="h2" id="xp-title">Field, office <em>and research.</em></h2>
+      <p class="lead">Mapping for a state government, environmental baselines for a consultancy, forest fieldwork and a university research placement.</p>
+    </div>
+    <div><article class="role"><p class="label">Feb – Apr 2026</p><div><h3>Research Assistant</h3><p class="org">The University of Manchester, United Kingdom <a href="#westgorton" data-case="westgorton">See the project</a></p><ul><li>Harmonised the study geography to 12 Census 2021 LSOAs covering one intervention and two comparison areas, resolving 2011–2021 boundary splits and merges with the ONS exact-fit lookup.</li><li>Sourced, cleaned and joined ONS population estimates (2018–2024), ONS house-price statistics (2018–2023), IMD 2019 and 2025 and five Census 2021 tables in ArcGIS Pro, then produced thematic maps and summary tables.</li><li>Showed the intervention area had the lowest residential churn (8.2% moved in the year before the census, against 24.2% and 30.3%) and the slowest population growth (14.4%), so rising park use was unlikely to come from new residents.</li><li>Wrote the findings up for non-technical readers. The analysis now informs the team’s research with community members and Manchester City Council.</li></ul></div></article><article class="role"><p class="label">Aug 2024 – Jan 2025</p><div><h3>GIS &amp; Remote Sensing Intern</h3><p class="org">AGiSAC, Government of Himachal Pradesh, India</p><ul><li>Digitised a third of the door-to-door property survey data collected by field staff across two town councils in ArcMap 10.3.1: Arki (932 properties, 2.3 km²) and Jubbal (450 properties, 1.5 km²).</li><li>Built parcel, road, stream and open-space layers in SHP and KML across 14 wards for the councils’ GIS systems.</li><li>Classified land-use and land-cover features and linked every parcel to its survey Map ID, feeding a dataset the state government used for property-tax assessment under its municipal GIS modernisation programme.</li></ul></div></article><article class="role"><p class="label">Nov 2023 – Jan 2024</p><div><h3>GIS Intern (part-time)</h3><p class="org">G eye S Geospatial Solutions Pvt. Ltd, India</p><ul><li>Sourced and processed rainfall, temperature, terrain and land-cover data from NASA POWER, CHRS, Bhuvan and Copernicus for environmental baselines under India’s EIA framework.</li><li>Produced thematic maps and structured spatial layers with attribute tables in ArcMap 10.3.1 and QGIS for the consultancy’s forest-mapping and environmental projects.</li></ul></div></article><article class="role"><p class="label">Oct – Nov 2023</p><div><h3>Forestry Trainee</h3><p class="org">Himachal Pradesh State Forest Department, India</p><ul><li>Completed a 45-day field placement in Kullu district, including 10 days at the JICA forest nursery in Shamshi, grading Cedrus deodara stock against a nine-inch height standard and identifying 12 tree species.</li><li>Studied catchment area treatment for erosion control (brushwood check dams, contour bunding and assisted natural regeneration) and discussed forestry impacts with the Chief Engineer at NHPC’s 520 MW Parbati Hydroelectric Project-III.</li></ul></div></article></div>
+  </div>
+</section>
+
+<section class="band" id="toolkit" aria-labelledby="kit-title">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">Toolkit</p>
+      <h2 class="h2" id="kit-title">What I <em>work with.</em></h2>
+      <p class="lead">Grouped the way the work happens: capture, measure, analyse, automate. Levels are stated where a tool is still developing.</p>
+    </div>
+    <div class="kit"><section><span class="label" style="display:inline-flex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="6"/><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg></span><h3>Survey &amp; data capture</h3><ul><li><span>UAV (drone) survey</span><small>CAA Flyer ID</small></li><li><span>Ground control with RTK GNSS</span></li><li><span>SfM outputs: orthomosaics, DSMs</span></li><li><span>Digitising field survey records into parcel layers</span></li></ul></section><section><span class="label" style="display:inline-flex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 19.5 9 7l4 6.5 2.5-4 6 10z"/><path d="M9 7l1.4 2.6"/></svg></span><h3>Measurement &amp; modelling</h3><ul><li><span>Area, perimeter and height-above-ground</span></li><li><span>DTM interpolation (IDW, Kriging)</span></li><li><span>DSM–DTM differencing</span></li><li><span>Geodesic vs projected distance</span></li><li><span>CRS handling, incl. EPSG:27700</span></li></ul></section><section><span class="label" style="display:inline-flex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="17" height="17"/><path d="M9.2 3.5v17M14.8 3.5v17M3.5 9.2h17M3.5 14.8h17"/><rect x="9.2" y="9.2" width="5.6" height="5.6" fill="currentColor" stroke="none"/><rect x="14.8" y="3.5" width="5.7" height="5.7" fill="currentColor" stroke="none" opacity=".45"/></svg></span><h3>GIS &amp; remote sensing</h3><ul><li><span>ArcGIS Pro, ArcMap, ArcGIS Online</span></li><li><span>QGIS</span></li><li><span>Google Earth Engine, LandTrendr</span></li><li><span>Landsat, Sentinel-1 SAR, Sentinel-2</span></li><li><span>Weighted overlay and MCDA</span></li><li><span>Flood Modeller</span><small>working knowledge</small></li></ul></section><section><span class="label" style="display:inline-flex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M13.5 4l-3 16"/></svg></span><h3>Programming &amp; data</h3><ul><li><span>Python: GeoPandas, Shapely, pyproj, rasterio, Matplotlib</span></li><li><span>JavaScript for Earth Engine</span></li><li><span>SQL attribute queries in ArcGIS</span></li><li><span>Excel and PowerPoint</span><small>intermediate</small></li><li><span>AutoCAD</span><small>developing</small></li></ul></section></div>
+  </div>
+</section>
+
+<section class="band on-mocha" id="about" aria-labelledby="about-title">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">About</p>
+      <h2 class="h2" id="about-title">A forester who <em>learned to map from above.</em></h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-copy">
+        <p>I grew up in Shimla and studied forests on foot in Himachal Pradesh before studying them from orbit in Manchester.</p>
+        <p>My BSc (Hons) in Forestry covered geomatics, forest mensuration, hydrology and watershed management, geology and soils. Field training in Kullu covered forest nurseries and erosion-control works on steep catchments.</p>
+        <p>My MSc in Geographical Information Science added Python, Google Earth Engine, SAR and UAV survey. Most of my projects end in a practical decision, such as where to inspect slopes, where to target green space, or whether a park’s users are new or long-standing residents.</p>
+        <p>Outside the map I am a Global Shaper in the World Economic Forum’s Global Shapers Community, was elected Academic Representative for 54 GIS students, and from 2022 to 2025 ran blood-donation camps and tree-planting drives with The Voice, an NGO in India.</p>
+      </div>
+      <div class="edu">
+        <article><p class="label">Sep 2025 – Sep 2026</p><h3>MSc Geographical Information Science</h3><p>The University of Manchester · Expected: Merit</p><p style="margin-top:.6rem">Modules include Data Acquisition for GI Scientists, Environmental Monitoring and Modelling Practice, GIS and Environmental Applications, Understanding GIS (Python), Environmental Remote Sensing and Fundamentals of SAR.</p></article>
+        <article><p class="label">Nov 2020 – Jul 2024</p><h3>BSc (Hons) Forestry</h3><p>Dr YS Parmar University of Horticulture and Forestry, India · OGPA 7.80/10</p></article>
+        <article><p class="label">Publication · 2024</p><div class="pub"><cite>Madaik, D.S. and Negi, M. (2024) ‘Mapping flames: leveraging remote sensing and GIS for forest fire prevention’, <i>TerraGreen</i>, 17(9), pp. 46–48.</cite></div></article>
+      </div>
+    </div>
+    <div class="creds">
+      <div><h3>Certifications & memberships</h3><ul>
+        <li>CAA Flyer ID, A1/A3 Open Category<span>UK Civil Aviation Authority · Oct 2025 – Oct 2030</span></li>
+        <li>Student Member<span>Royal Institution of Chartered Surveyors (RICS) · from Nov 2026</span></li>
+        <li>Network Member<span>Association for Geographic Information (AGI) · from Mar 2026</span></li>
+        <li>Student Member<span>International Association of Geodesy (IAG) · Apr – Dec 2026</span></li>
+      </ul></div>
+      <div><h3>Leadership & volunteering</h3><ul>
+        <li>Global Shaper, Global Shapers Community<span>Mapping priority green-space sites for the hub’s pocket-forest project · from Apr 2026</span></li>
+        <li>Academic Representative, The University of Manchester<span>Elected for a cohort of 54 GIS students · Oct 2025 – Sep 2026</span></li>
+        <li>Operations Lead (volunteer), The Voice NGO, India<span>Blood-donation camps, tree planting and distribution drives · Mar 2022 – Aug 2025</span></li>
+        <li>Cadet, National Cadet Corps (Army Wing), India<span>8 years, ‘C’ Certificate at Grade A · 2016 – 2024</span></li>
+      </ul></div>
+      <div><h3>Languages</h3><ul>
+        <li>English<span>Fluent</span></li><li>Hindi<span>Native</span></li><li>Punjabi<span>Working</span></li><li>Urdu<span>Intermediate</span></li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="band contact" id="contact" aria-labelledby="contact-title">
+  <div class="wrap contact-grid">
+    <div class="sec-head" style="margin:0">
+      <p class="label">Contact</p>
+      <h2 class="h2" id="contact-title">Looking for graduate roles in <em>GIS, remote sensing and survey.</em></h2>
+      <p class="lead">Based in Manchester and happy to relocate. I’m also open to placements, volunteering with mapping teams and freelance GIS work.</p>
+    </div>
+    <div class="contact-card">
+      <p class="label">Email</p>
+      <div class="mail-row"><span class="mail" id="mail-text" data-mail>dhananjaysmadaik [at] gmail [dot] com</span><button type="button" class="copy" id="copy-mail">Copy</button></div>
+      <div class="contact-links">
+        <a class="btn btn-primary" href="#contact" data-mail>Email me <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="m4 6.5 8 6 8-6"/></svg></a>
+        <a class="btn btn-ghost" href="https://www.linkedin.com/in/dhananjaysinghmadaik/" target="_blank" rel="noopener noreferrer">LinkedIn <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 10.5V17M8 7.2v.01M12 17v-3.6c0-1.6 1-2.6 2.3-2.6s2.2 1 2.2 2.6V17M12 10.5V17"/></svg></a>
+        <a class="btn btn-ghost" href="https://github.com/dhananjaysmadaik" target="_blank" rel="noopener noreferrer">GitHub <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a>
+      </div>
+      <p class="contact-note">References available on request.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="band on-night site-foot">
+  <div class="wrap">
+    <div class="foot-row">
+      <a class="wordmark" href="#top">Dhananjay <em>Singh Madaik</em></a>
+      <nav aria-label="Footer"><ul><li><a href="#work">Work</a></li><li><a href="#experience">Experience</a></li><li><a href="#toolkit">Toolkit</a></li><li><a href="#about">About</a></li><li><a href="#contact">Contact</a></li><li><a href="https://www.linkedin.com/in/dhananjaysinghmadaik/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li></ul></nav>
+    </div>
+    <div class="attrib">
+      <p>Maps, figures and photographs are my own unless credited. Basemaps and source data are credited on each map, including Esri and contributors, Ordnance Survey (© Crown copyright and database rights), ONS, Copernicus Sentinel data and the USGS Landsat archive.</p>
+      <p>© <span id="year">2026</span> Dhananjay Singh Madaik. Manchester, United Kingdom.</p>
+    </div>
+  </div>
+</footer>
+
+<noscript><style>.cases [hidden]{display:block!important}.cases .fig button{pointer-events:none}</style></noscript>
+<div class="cases" id="cases"><article class="case-src" id="landslide" data-title="Landslides along the NH-5 Satluj corridor, Kinnaur" hidden><div class="wrap case-inner"><header class="case-head"><div class="case-meta"><span class="label" style="display:inline-flex;gap:.45rem;align-items:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 19.5 9 7l4 6.5 2.5-4 6 10z"/><path d="M9 7l1.4 2.6"/></svg>MSc dissertation</span><span class="label">Sep 2026</span></div><h2>Landslide inventory, susceptibility and exposure along the NH-5 Satluj corridor</h2><p class="lead">NH-5 follows the Satluj Valley through some of the steepest terrain in the western Himalaya. I mapped where slopes have failed along the road, modelled where failure is relatively more likely across the district, and measured which land and villages sit in the way.</p><div class="case-links"><a class="btn btn-primary btn-sm" href="reports/dissertation-landslide-kinnaur.pdf" target="_blank" rel="noopener">Read the dissertation (PDF, 5 MB) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h7"/></svg></a></div></header><div class="case-stats stats"><div><b>179</b><span>landslides hand-digitised in the 1 km corridor</span></div><div><b>57.0%</b><span>of them within 300 m of the road</span></div><div><b>91</b><span>village points inside the corridor</span></div><div><b>28.7%</b><span>of Kinnaur classed High or Very High susceptibility</span></div></div><div class="case-cols"><div class="case-body"><section><h3>The question</h3><p class="q">How are landslides distributed along the highway, what pattern of relative susceptibility do terrain and environmental factors produce, and what land and settlements are exposed?</p></section><section><h3>Data</h3><ul class="findings" style="gap:.4rem"><li style="padding-left:1.4rem">High-resolution Google Earth imagery, November 2025</li><li style="padding-left:1.4rem">ALOS DEM, 12.5 m (slope, elevation, aspect, stream order)</li><li style="padding-left:1.4rem">Esri / Impact Observatory Sentinel-2 land cover, 10 m</li><li style="padding-left:1.4rem">Geological Survey of India geology, 1:50,000</li><li style="padding-left:1.4rem">NBSS&amp;LUP soil texture, 1:50,000</li><li style="padding-left:1.4rem">CHRS PERSIANN-CDR precipitation, 2025, 0.25°</li><li style="padding-left:1.4rem">Survey of India road and village points, 1:50,000</li></ul></section><section><h3>What I did</h3><ol class="steps"><li><span>Hand-digitised 179 landslide polygons from November 2025 imagery inside a 1,000 m corridor around NH-5, and grouped them by area into 58 small, 104 medium and 17 large.</span></li><li><span>Split the corridor into three non-overlapping bands (0–300, 300–600 and 600–1,000 m) in WGS 1984 UTM zone 44N and counted landslides and landslide area in each band.</span></li><li><span>Rasterised the landslides at 10 m and overlaid them on Sentinel-2 land cover to measure what they cover, then mapped the village points that fall inside the corridor.</span></li><li><span>Reclassified eight conditioning factors and combined them in a weighted overlay across 6,482 km² of Kinnaur, weighting slope highest.</span></li><li><span>Ran a separate Kriging surface of landslide area and kept it apart from the susceptibility model as an exploratory layer.</span></li></ol></section><section><h3>Factor weights in the susceptibility model</h3><div class="weights" role="list"><div role="listitem"><span>Slope</span><i style="width:100%"></i><span>35%</span></div><div role="listitem"><span>Elevation</span><i style="width:43%"></i><span>15%</span></div><div role="listitem"><span>Precipitation</span><i style="width:43%"></i><span>15%</span></div><div role="listitem"><span>Geology</span><i style="width:29%"></i><span>10%</span></div><div role="listitem"><span>Land cover</span><i style="width:29%"></i><span>10%</span></div><div role="listitem"><span>Aspect</span><i style="width:14%"></i><span>5%</span></div><div role="listitem"><span>Soil texture</span><i style="width:14%"></i><span>5%</span></div><div role="listitem"><span>Stream order</span><i style="width:14%"></i><span>5%</span></div></div></section><section><h3>What I found</h3><ul class="findings"><li>Landslides thin out with distance from the road: 102 (57.0%) lie within 300 m, 44 (24.6%) at 300–600 m and 33 (18.4%) at 600–1,000 m.</li><li>In the corridor, landslides overlap 6.30 km² of land cover, mostly rangeland (58.1%) and bare ground (38.1%). Built-up land makes up 3.1%.</li><li>91 village points sit inside the corridor, including Pangi, Powari, Tapri and Urni.</li><li>Across Kinnaur, Medium susceptibility covers 44.6% of the district, High 26.1% and Very High 2.6%.</li></ul></section><section><h3>Limits I flagged</h3><ul class="limits"><li>The susceptibility map is relative and expert-weighted, with no statistical validation such as ROC/AUC, so it shows where conditions combine rather than a probability of failure.</li><li>The road-proximity pattern is a spatial association. It does not prove that road construction caused the failures.</li><li>My April 2025 field photographs give context only and were not used as validation.</li></ul></section></div><aside class="case-side"><div class="side-box"><h4>Report</h4><a class="btn btn-primary btn-sm" href="reports/dissertation-landslide-kinnaur.pdf" target="_blank" rel="noopener">Read the dissertation (PDF, 5 MB) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h7"/></svg></a></div><div class="side-box"><h4>At a glance</h4><ul><li><span class="label" style="display:block">Context</span>MSc dissertation, The University of Manchester</li><li><span class="label" style="display:block">Supervisor</span>Dr Matthew Tomkins</li><li><span class="label" style="display:block">Where</span>Kafaur to Khab, Kinnaur, Himachal Pradesh</li><li><span class="label" style="display:block">When</span>Submitted September 2026</li></ul></div><div class="side-box"><h4>Tools & methods</h4><ul><li>ArcMap 10.3.1</li><li>Weighted Overlay</li><li>Polygon to Raster</li><li>Kriging</li><li>Google Earth</li></ul></div><div class="side-box"><h4>Coordinate reference</h4><p>WGS 1984 UTM zone 44N (EPSG:32644)</p></div></aside></div><section class="figs"><h3>Maps and figures · select any to enlarge and zoom</h3><div class="fig-grid"><figure class="fig"><button type="button" data-full="maps/l-study.webp" data-thumb="thumbs/l-study.webp" data-w="1349" data-h="1910" aria-label="Enlarge: Figure 1. The Kafaur–Khab NH-5 corridor within Kinnaur District, on the 12.5 m ALOS DEM, with the 300, 600 and 1,000 m road buffers."><img src="thumbs/l-study.webp" width="636" height="900" alt="Figure 1. The Kafaur–Khab NH-5 corridor within Kinnaur District, on the 12.5 m ALOS DEM, with the 300, 600 and 1,000 m road buffers." loading="lazy" decoding="async"></button><figcaption>Figure 1. The Kafaur–Khab NH-5 corridor within Kinnaur District, on the 12.5 m ALOS DEM, with the 300, 600 and 1,000 m road buffers.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/l-suscept.webp" data-thumb="thumbs/l-suscept.webp" data-w="794" data-h="1125" aria-label="Enlarge: Figure 17. Relative landslide susceptibility across Kinnaur from the eight-factor weighted overlay."><img src="thumbs/l-suscept.webp" width="635" height="900" alt="Figure 17. Relative landslide susceptibility across Kinnaur from the eight-factor weighted overlay." loading="lazy" decoding="async"></button><figcaption>Figure 17. Relative landslide susceptibility across Kinnaur from the eight-factor weighted overlay.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/l-corridor.webp" data-thumb="thumbs/l-corridor.webp" data-w="1401" data-h="1983" aria-label="Enlarge: Figure 14. Mapped landslides within the 1,000 m NH-5 corridor."><img src="thumbs/l-corridor.webp" width="636" height="900" alt="Figure 14. Mapped landslides within the 1,000 m NH-5 corridor." loading="lazy" decoding="async"></button><figcaption>Figure 14. Mapped landslides within the 1,000 m NH-5 corridor.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/l-inventory.webp" data-thumb="thumbs/l-inventory.webp" data-w="1410" data-h="1994" aria-label="Enlarge: Figure 12. Mapped landslides inside the corridor (179) and in the wider district dataset (1,215)."><img src="thumbs/l-inventory.webp" width="636" height="900" alt="Figure 12. Mapped landslides inside the corridor (179) and in the wider district dataset (1,215)." loading="lazy" decoding="async"></button><figcaption>Figure 12. Mapped landslides inside the corridor (179) and in the wider district dataset (1,215).</figcaption></figure><figure class="fig"><button type="button" data-full="maps/l-villages.webp" data-thumb="thumbs/l-villages.webp" data-w="1163" data-h="1647" aria-label="Enlarge: Figure 16. Village point locations inside the 1,000 m corridor, shown against land cover."><img src="thumbs/l-villages.webp" width="636" height="900" alt="Figure 16. Village point locations inside the 1,000 m corridor, shown against land cover." loading="lazy" decoding="async"></button><figcaption>Figure 16. Village point locations inside the 1,000 m corridor, shown against land cover.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/l-photos.webp" data-thumb="thumbs/l-photos.webp" data-w="1380" data-h="967" aria-label="Enlarge: Figure 13. My photographs of landslides along NH-5, 15 April 2025, including the Urni slide near the Karcham-Wangtoo hydroelectric project. Context only, not validation."><img src="thumbs/l-photos.webp" width="720" height="505" alt="Figure 13. My photographs of landslides along NH-5, 15 April 2025, including the Urni slide near the Karcham-Wangtoo hydroelectric project. Context only, not validation." loading="lazy" decoding="async"></button><figcaption>Figure 13. My photographs of landslides along NH-5, 15 April 2025, including the Urni slide near the Karcham-Wangtoo hydroelectric project. Context only, not validation.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/l-slope.webp" data-thumb="thumbs/l-slope.webp" data-w="1379" data-h="1953" aria-label="Enlarge: Figure 3. Slope across the Kinnaur study region, the most heavily weighted factor (35%)."><img src="thumbs/l-slope.webp" width="635" height="900" alt="Figure 3. Slope across the Kinnaur study region, the most heavily weighted factor (35%)." loading="lazy" decoding="async"></button><figcaption>Figure 3. Slope across the Kinnaur study region, the most heavily weighted factor (35%).</figcaption></figure><figure class="fig"><button type="button" data-full="maps/l-kriging.webp" data-thumb="thumbs/l-kriging.webp" data-w="795" data-h="1125" aria-label="Enlarge: Figure 18. Kriging surface of mapped landslide area. Exploratory, and kept separate from the susceptibility model."><img src="thumbs/l-kriging.webp" width="636" height="900" alt="Figure 18. Kriging surface of mapped landslide area. Exploratory, and kept separate from the susceptibility model." loading="lazy" decoding="async"></button><figcaption>Figure 18. Kriging surface of mapped landslide area. Exploratory, and kept separate from the susceptibility model.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/l-workflow.webp" data-thumb="thumbs/l-workflow.webp" data-w="1175" data-h="1117" aria-label="Enlarge: Figure 2. Data sources and analytical workflow."><img src="thumbs/l-workflow.webp" width="720" height="684" alt="Figure 2. Data sources and analytical workflow." loading="lazy" decoding="async"></button><figcaption>Figure 2. Data sources and analytical workflow.</figcaption></figure></div></section><nav class="case-foot" aria-label="More projects"><button type="button" class="icon-btn" data-go-label="prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 12H5M11 6l-6 6 6 6"/></svg><span></span></button><button type="button" class="icon-btn" data-go-label="next"><span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button></nav></div></article><article class="case-src" id="ndvi" data-title="Vegetation disturbance on steep Himalayan slopes, 2000–2024" hidden><div class="wrap case-inner"><header class="case-head"><div class="case-meta"><span class="label" style="display:inline-flex;gap:.45rem;align-items:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="17" height="17"/><path d="M9.2 3.5v17M14.8 3.5v17M3.5 9.2h17M3.5 14.8h17"/><rect x="9.2" y="9.2" width="5.6" height="5.6" fill="currentColor" stroke="none"/><rect x="14.8" y="3.5" width="5.7" height="5.7" fill="currentColor" stroke="none" opacity=".45"/></svg>Landsat time series</span><span class="label">Jan 2026</span></div><h2>Two decades of vegetation disturbance and recovery on steep Himalayan slopes</h2><p class="lead">Vegetation holds thin mountain soils in place, and losing it on steep ground raises landslide risk. Using annual Landsat composites from 2000 to 2024, I tracked when and how badly vegetation was lost on Himachal Pradesh’s steep slopes, how long it took to recover, and where those signals overlap.</p><div class="case-links"><a class="btn btn-primary btn-sm" href="reports/landsat-ndvi-himachal.pdf" target="_blank" rel="noopener">Read the report (PDF, 3.4 MB) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h7"/></svg></a></div></header><div class="case-stats stats"><div><b>2000–2024</b><span>annual Landsat NDVI composites</span></div><div><b>30°</b><span>slope threshold for landslide-relevant terrain</span></div><div><b>12</b><span>districts ranked by hotspot area</span></div><div><b>1.71 km²</b><span>hotspot area in Chamba, the highest</span></div></div><div class="case-cols"><div class="case-body"><section><h3>The question</h3><p class="q">How much vegetation disturbance has there been since 2000, does it concentrate on steep slopes and particular elevation bands, and which districts show the strongest combined stress?</p></section><section><h3>Data</h3><ul class="findings" style="gap:.4rem"><li style="padding-left:1.4rem">Landsat annual NDVI composites, 2000–2024 (Google Earth Engine)</li><li style="padding-left:1.4rem">SRTM DEM (slope and elevation bands)</li><li style="padding-left:1.4rem">CHIRPS monsoon rainfall, 2000–2024</li><li style="padding-left:1.4rem">District boundaries for Himachal Pradesh</li></ul></section><section><h3>What I did</h3><ol class="steps"><li><span>Built annual Landsat NDVI composites for 2000–2024 in Google Earth Engine to damp cloud, atmospheric and seasonal noise.</span></li><li><span>Ran the LandTrendr segmentation algorithm to extract the year of greatest disturbance, its magnitude (NDVI loss) and the recovery time.</span></li><li><span>Kept disturbance on slopes of 30° or more from the SRTM DEM and stratified it by elevation band.</span></li><li><span>Mapped the long-term trend with Sen’s slope and compared disturbed steep slopes against nearby stable terrain.</span></li><li><span>Intersected steep terrain, disturbance or slow recovery, and a negative long-term trend into a deliberately conservative hotspot layer, summed it by district, and repeated it at a 25° threshold to test sensitivity.</span></li><li><span>Added CHIRPS monsoon rainfall anomalies as context only, never as a classifier.</span></li></ol></section><section><h3>What I found</h3><ul class="findings"><li>Disturbance is episodic and clustered rather than a steady statewide decline, with the strongest losses and the slowest recovery on steep mid- to high-elevation slopes.</li><li>Chamba has the largest hotspot area (1.71 km²), followed by Kullu (0.68 km²) and Mandi (0.54 km²). Una has none.</li><li>The spatial pattern and the district ranking held when the slope threshold was lowered to 25°.</li></ul></section><section><h3>Limits I flagged</h3><ul class="limits"><li>No landslide inventory was available to validate against, so hotspots mark compounded environmental stress, not landslide occurrence or probability.</li><li>Subsurface factors such as lithology and soil were left out, and Landsat’s 30 m pixels miss narrow road cuts and small scars.</li></ul></section></div><aside class="case-side"><div class="side-box"><h4>Report</h4><a class="btn btn-primary btn-sm" href="reports/landsat-ndvi-himachal.pdf" target="_blank" rel="noopener">Read the report (PDF, 3.4 MB) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h7"/></svg></a><a class="btn btn-ghost btn-sm" href="https://code.earthengine.google.com/02beb2d860d96f433856d23851a0be4d" target="_blank" rel="noopener noreferrer">Open the Earth Engine script <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 4h6v6M20 4l-9 9"/><path d="M19 14v4.5A1.5 1.5 0 0 1 17.5 20h-12A1.5 1.5 0 0 1 4 18.5v-12A1.5 1.5 0 0 1 5.5 5H10"/></svg></a><p style="margin-top:.5rem">Needs a Google Earth Engine sign-in to view.</p></div><div class="side-box"><h4>At a glance</h4><ul><li><span class="label" style="display:block">Context</span>MSc coursework, The University of Manchester</li><li><span class="label" style="display:block">Where</span>Himachal Pradesh, India</li><li><span class="label" style="display:block">Period</span>2000–2024</li><li><span class="label" style="display:block">When</span>January 2026</li></ul></div><div class="side-box"><h4>Tools & methods</h4><ul><li>Google Earth Engine (JavaScript)</li><li>LandTrendr</li><li>Sen’s slope</li><li>Landsat</li><li>SRTM DEM</li><li>CHIRPS</li></ul></div></aside></div><section class="figs"><h3>Maps and figures · select any to enlarge and zoom</h3><div class="fig-grid"><figure class="fig"><button type="button" data-full="maps/n-period.webp" data-thumb="thumbs/n-period.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Fig. 3. Year of strongest vegetation disturbance (LandTrendr NDVI), grouped into 2000–2004, 2005–2009, 2010–2014 and 2015–2023."><img src="thumbs/n-period.webp" width="720" height="509" alt="Fig. 3. Year of strongest vegetation disturbance (LandTrendr NDVI), grouped into 2000–2004, 2005–2009, 2010–2014 and 2015–2023." loading="lazy" decoding="async"></button><figcaption>Fig. 3. Year of strongest vegetation disturbance (LandTrendr NDVI), grouped into 2000–2004, 2005–2009, 2010–2014 and 2015–2023.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/n-magnitude.webp" data-thumb="thumbs/n-magnitude.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Fig. 4. Vegetation disturbance magnitude (NDVI loss)."><img src="thumbs/n-magnitude.webp" width="720" height="509" alt="Fig. 4. Vegetation disturbance magnitude (NDVI loss)." loading="lazy" decoding="async"></button><figcaption>Fig. 4. Vegetation disturbance magnitude (NDVI loss).</figcaption></figure><figure class="fig"><button type="button" data-full="maps/n-recovery.webp" data-thumb="thumbs/n-recovery.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Fig. 5. Recovery duration after disturbance, from fast to slow."><img src="thumbs/n-recovery.webp" width="720" height="509" alt="Fig. 5. Recovery duration after disturbance, from fast to slow." loading="lazy" decoding="async"></button><figcaption>Fig. 5. Recovery duration after disturbance, from fast to slow.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/n-trend.webp" data-thumb="thumbs/n-trend.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Fig. 6. Long-term NDVI trend from Sen’s slope, 2000–2024."><img src="thumbs/n-trend.webp" width="720" height="509" alt="Fig. 6. Long-term NDVI trend from Sen’s slope, 2000–2024." loading="lazy" decoding="async"></button><figcaption>Fig. 6. Long-term NDVI trend from Sen’s slope, 2000–2024.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/n-hotspots.webp" data-thumb="thumbs/n-hotspots.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Fig. 8. Coupled landslide-stress hotspots, where steep terrain, vegetation loss and delayed recovery coincide."><img src="thumbs/n-hotspots.webp" width="720" height="509" alt="Fig. 8. Coupled landslide-stress hotspots, where steep terrain, vegetation loss and delayed recovery coincide." loading="lazy" decoding="async"></button><figcaption>Fig. 8. Coupled landslide-stress hotspots, where steep terrain, vegetation loss and delayed recovery coincide.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/n-study.webp" data-thumb="thumbs/n-study.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Fig. 1. Himachal Pradesh study area and elevation bands."><img src="thumbs/n-study.webp" width="720" height="509" alt="Fig. 1. Himachal Pradesh study area and elevation bands." loading="lazy" decoding="async"></button><figcaption>Fig. 1. Himachal Pradesh study area and elevation bands.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/n-slope.webp" data-thumb="thumbs/n-slope.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Fig. 2. Steep terrain of 30° or more, derived from the SRTM DEM."><img src="thumbs/n-slope.webp" width="720" height="509" alt="Fig. 2. Steep terrain of 30° or more, derived from the SRTM DEM." loading="lazy" decoding="async"></button><figcaption>Fig. 2. Steep terrain of 30° or more, derived from the SRTM DEM.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/n-hist.webp" data-thumb="thumbs/n-hist.webp" data-w="1496" data-h="664" aria-label="Enlarge: NDVI Sen’s-slope distribution, used to compare disturbed and stable terrain."><img src="thumbs/n-hist.webp" width="720" height="320" alt="NDVI Sen’s-slope distribution, used to compare disturbed and stable terrain." loading="lazy" decoding="async"></button><figcaption>NDVI Sen’s-slope distribution, used to compare disturbed and stable terrain.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/n-rain.webp" data-thumb="thumbs/n-rain.webp" data-w="1496" data-h="664" aria-label="Enlarge: Fig. 7. Monsoon rainfall anomaly over Himachal Pradesh (CHIRPS), used as context only."><img src="thumbs/n-rain.webp" width="720" height="320" alt="Fig. 7. Monsoon rainfall anomaly over Himachal Pradesh (CHIRPS), used as context only." loading="lazy" decoding="async"></button><figcaption>Fig. 7. Monsoon rainfall anomaly over Himachal Pradesh (CHIRPS), used as context only.</figcaption></figure></div></section><nav class="case-foot" aria-label="More projects"><button type="button" class="icon-btn" data-go-label="prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 12H5M11 6l-6 6 6 6"/></svg><span></span></button><button type="button" class="icon-btn" data-go-label="next"><span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button></nav></div></article><article class="case-src" id="westgorton" data-title="Did new residents explain a park’s success? West Gorton, Manchester" hidden><div class="wrap case-inner"><header class="case-head"><div class="case-meta"><span class="label" style="display:inline-flex;gap:.45rem;align-items:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6.5 11 3l9 4.5-1.5 11L9 21l-6-5z"/><path d="M5.5 15 15 5.8M8 18.5l10.6-9.7M3.8 11 11 4.2"/></svg>Research placement</span><span class="label">Feb–Apr 2026</span></div><h2>Neighbourhood context for a park evaluation in West Gorton, Manchester</h2><p class="lead">A co-designed park improvement in West Gorton was followed by large rises in walking and park use. The research team needed to know whether that could just reflect new people moving into the area. I built the neighbourhood evidence to test it, against two comparison areas.</p></header><div class="case-stats stats"><div><b>12</b><span>LSOAs harmonised from 2011 to 2021 boundaries</span></div><div><b>8.2%</b><span>of West Gorton residents moved in the year before the census</span></div><div><b>14.4%</b><span>population growth, 2018–2024</span></div><div><b>Decile 1</b><span>every West Gorton LSOA in the most deprived 10%</span></div></div><div class="case-cols"><div class="case-body"><section><h3>The question</h3><p class="q">Did West Gorton and its comparison areas differ in population change, residential churn, house prices, deprivation and social profile, and could those differences explain the rise in park use?</p></section><section><h3>Data</h3><ul class="findings" style="gap:.4rem"><li style="padding-left:1.4rem">ONS small-area population estimates, 2018–2024</li><li style="padding-left:1.4rem">ONS House Price Statistics for Small Areas, dataset 46, 2018–2023</li><li style="padding-left:1.4rem">English Indices of Deprivation 2025 (with a cautious comparison to 2019)</li><li style="padding-left:1.4rem">Census 2021: TS007A age, TS021 ethnicity, TS054 tenure, TS019 migration, TS038 disability</li><li style="padding-left:1.4rem">ONS LSOA 2011 to 2021 exact-fit lookup</li></ul></section><section><h3>What I did</h3><ol class="steps"><li><span>Harmonised the study areas to 12 Census 2021 LSOAs with the ONS exact-fit lookup, resolving the splits and merges between the 2011 and 2021 releases.</span></li><li><span>Cleaned every source into join-ready tables and joined them on the 2021 LSOA code in ArcGIS Pro.</span></li><li><span>Carried older house-price medians across to split or merged areas and treated them as indicative, because medians cannot simply be re-added.</span></li><li><span>Produced thematic maps and summary tables for population, house prices, deprivation, tenure, mobility, age, ethnicity and disability.</span></li><li><span>Wrote the findings up for non-technical readers.</span></li></ol></section><section><h3>What I found</h3><ul class="findings"><li>West Gorton had the lowest churn: 8.2% of residents had moved in the year before the census, against 24.2% in Ardwick and 30.3% in Pendleton.</li><li>Its population grew 14.4% between 2018 and 2024, against 20.8% in Ardwick and 56.0% in Pendleton.</li><li>All three West Gorton LSOAs fall in the most deprived 10% nationally on IMD 2025, and 53.1% of households rent socially.</li><li>House prices rose least there (a mean LSOA change of 16.6%, against 30.4% and 41.8%), so there is no strong sign of rapid green gentrification over the period.</li><li>Together these point to rising park use coming from the existing community rather than from new residents. The analysis now informs the team’s research with community members and Manchester City Council.</li></ul></section><section><h3>Limits I flagged</h3><ul class="limits"><li>LSOAs are larger than the park’s catchment, so this describes the neighbourhood, not the people using the park.</li><li>Census variables are a 2021 snapshot, and IMD releases are relative rankings rather than a clean time series.</li></ul></section></div><aside class="case-side"><div class="side-box"><h4>Report</h4><p>The full placement report was written for the research team and is available on request.</p></div><div class="side-box"><h4>At a glance</h4><ul><li><span class="label" style="display:block">Context</span>Research Assistant placement, The University of Manchester</li><li><span class="label" style="display:block">Supervisor</span>Dr Jack Benton</li><li><span class="label" style="display:block">Where</span>West Gorton, Pendleton and Ardwick, Greater Manchester</li><li><span class="label" style="display:block">When</span>February to April 2026</li></ul></div><div class="side-box"><h4>Tools & methods</h4><ul><li>ArcGIS Pro</li><li>Attribute joins</li><li>Thematic mapping</li><li>Excel</li></ul></div></aside></div><section class="figs"><h3>Maps and figures · select any to enlarge and zoom</h3><div class="fig-grid"><figure class="fig"><button type="button" data-full="maps/p-study.webp" data-thumb="thumbs/p-study.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Figure 1. The harmonised study geography: 12 Census 2021 LSOAs covering West Gorton (intervention), Pendleton and Ardwick (comparison)."><img src="thumbs/p-study.webp" width="720" height="509" alt="Figure 1. The harmonised study geography: 12 Census 2021 LSOAs covering West Gorton (intervention), Pendleton and Ardwick (comparison)." loading="lazy" decoding="async"></button><figcaption>Figure 1. The harmonised study geography: 12 Census 2021 LSOAs covering West Gorton (intervention), Pendleton and Ardwick (comparison).</figcaption></figure><figure class="fig"><button type="button" data-full="maps/p-mobility.webp" data-thumb="thumbs/p-mobility.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Figure 8. Residents who moved in the year before Census Day 2021."><img src="thumbs/p-mobility.webp" width="720" height="509" alt="Figure 8. Residents who moved in the year before Census Day 2021." loading="lazy" decoding="async"></button><figcaption>Figure 8. Residents who moved in the year before Census Day 2021.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/p-pop.webp" data-thumb="thumbs/p-pop.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Figure 2. Population change by LSOA, 2018–2024."><img src="thumbs/p-pop.webp" width="720" height="509" alt="Figure 2. Population change by LSOA, 2018–2024." loading="lazy" decoding="async"></button><figcaption>Figure 2. Population change by LSOA, 2018–2024.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/p-house.webp" data-thumb="thumbs/p-house.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Figure 4. Change in harmonised LSOA median house-price indicators, 2018–2023."><img src="thumbs/p-house.webp" width="720" height="509" alt="Figure 4. Change in harmonised LSOA median house-price indicators, 2018–2023." loading="lazy" decoding="async"></button><figcaption>Figure 4. Change in harmonised LSOA median house-price indicators, 2018–2023.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/p-imd.webp" data-thumb="thumbs/p-imd.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Figure 6. IMD 2025 deprivation decile by LSOA."><img src="thumbs/p-imd.webp" width="720" height="509" alt="Figure 6. IMD 2025 deprivation decile by LSOA." loading="lazy" decoding="async"></button><figcaption>Figure 6. IMD 2025 deprivation decile by LSOA.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/p-social.webp" data-thumb="thumbs/p-social.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Figure 7. Households in social-rented tenure, Census 2021."><img src="thumbs/p-social.webp" width="720" height="509" alt="Figure 7. Households in social-rented tenure, Census 2021." loading="lazy" decoding="async"></button><figcaption>Figure 7. Households in social-rented tenure, Census 2021.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/p-ethnic.webp" data-thumb="thumbs/p-ethnic.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Figure 9. Non-White residents by LSOA, Census 2021."><img src="thumbs/p-ethnic.webp" width="720" height="509" alt="Figure 9. Non-White residents by LSOA, Census 2021." loading="lazy" decoding="async"></button><figcaption>Figure 9. Non-White residents by LSOA, Census 2021.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/p-disabled.webp" data-thumb="thumbs/p-disabled.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Figure 10. Residents disabled under the Equality Act, Census 2021."><img src="thumbs/p-disabled.webp" width="720" height="509" alt="Figure 10. Residents disabled under the Equality Act, Census 2021." loading="lazy" decoding="async"></button><figcaption>Figure 10. Residents disabled under the Equality Act, Census 2021.</figcaption></figure></div></section><nav class="case-foot" aria-label="More projects"><button type="button" class="icon-btn" data-go-label="prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 12H5M11 6l-6 6 6 6"/></svg><span></span></button><button type="button" class="icon-btn" data-go-label="next"><span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button></nav></div></article><article class="case-src" id="uav" data-title="Do beavers reshape the canopy? A UAV survey in Cornwall" hidden><div class="wrap case-inner"><header class="case-head"><div class="case-meta"><span class="label" style="display:inline-flex;gap:.45rem;align-items:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="6"/><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg>UAV survey</span><span class="label">Jan 2026</span></div><h2>UAV canopy survey of a beaver reintroduction site, Cornwall</h2><p class="lead">Beavers fell trees and flood ground, which should open up a woodland canopy. I compared canopy gaps in a beaver-influenced woodland and a woodland without beavers, using drone imagery and a height model, to see whether their structure differs.</p><div class="case-links"><a class="btn btn-primary btn-sm" href="reports/uav-canopy-beaver-woodland.pdf" target="_blank" rel="noopener">Read the report (PDF, 2.3 MB) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h7"/></svg></a></div></header><div class="case-stats stats"><div><b>2</b><span>woodlands surveyed by UAV</span></div><div><b>7 m</b><span>height threshold for a canopy gap</span></div><div><b>13.96 vs 15.08</b><span>median gap shape complexity, beaver vs none</span></div><div><b>203 vs 218</b><span>predicted understory species (±12), beaver vs none</span></div></div><div class="case-cols"><div class="case-body"><section><h3>The question</h3><p class="q">Does canopy-gap structure differ between beaver and non-beaver woodland, and what does a gap-based proxy suggest for understory plant richness?</p></section><section><h3>Data</h3><ul class="findings" style="gap:.4rem"><li style="padding-left:1.4rem">UAV imagery captured during fieldwork, with ground control points</li><li style="padding-left:1.4rem">Structure-from-Motion orthomosaics and digital surface models</li><li style="padding-left:1.4rem">British National Grid (EPSG:27700) throughout</li></ul></section><section><h3>What I did</h3><ol class="steps"><li><span>Flew the survey over both woodlands under staff supervision and set ground control points to keep the two sites spatially consistent.</span></li><li><span>Digitised each woodland boundary from the orthomosaics to limit edge effects.</span></li><li><span>Interpolated a terrain model from ground points with IDW and subtracted it from the SfM surface model to get height above ground.</span></li><li><span>Classified anything under 7 m as canopy gap, checked the result against the orthomosaics and converted the gaps to polygons.</span></li><li><span>Measured area and perimeter for every gap, calculated the Gap Shape Complexity Index for the three largest gaps per site, and applied the provided model to predict understory richness.</span></li></ol></section><section><h3>What I found</h3><ul class="findings"><li>The beaver site has one dominant, continuous opening. The woodland without beavers has many smaller, fragmented gaps.</li><li>Median Gap Shape Complexity was 13.96 at the beaver site and 15.08 without beavers, so the dominant gaps there are slightly simpler in shape.</li><li>The proxy model predicts about 203 (±12) understory species at the beaver site and 218 (±12) without, so larger gaps did not translate into higher predicted richness.</li></ul></section><section><h3>Limits I flagged</h3><ul class="limits"><li>Richness is a modelled proxy, not a field count, and the model was built in a different woodland type.</li><li>A fixed 7 m threshold and only three gaps per site make the result sensitive to shadows and to how boundaries were drawn.</li><li>With two sites, beaver activity is a likely contributing factor, not a proven cause.</li></ul></section></div><aside class="case-side"><div class="side-box"><h4>Report</h4><a class="btn btn-primary btn-sm" href="reports/uav-canopy-beaver-woodland.pdf" target="_blank" rel="noopener">Read the report (PDF, 2.3 MB) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h7"/></svg></a></div><div class="side-box"><h4>At a glance</h4><ul><li><span class="label" style="display:block">Context</span>MSc coursework with fieldwork</li><li><span class="label" style="display:block">Where</span>Woodland Valley Farm, Cornwall</li><li><span class="label" style="display:block">Role</span>Flew the survey under staff supervision and set ground control</li><li><span class="label" style="display:block">When</span>January 2026</li></ul></div><div class="side-box"><h4>Tools & methods</h4><ul><li>UAV survey</li><li>Ground control points</li><li>SfM orthomosaics and DSMs</li><li>IDW interpolation</li><li>DSM–DTM differencing</li><li>QGIS 3.40</li></ul></div><div class="side-box"><h4>Coordinate reference</h4><p>British National Grid (EPSG:27700)</p></div></aside></div><section class="figs"><h3>Maps and figures · select any to enlarge and zoom</h3><div class="fig-grid"><figure class="fig"><button type="button" data-full="maps/u-w1.webp" data-thumb="thumbs/u-w1.webp" data-w="1675" data-h="1186" aria-label="Enlarge: Figure 1a. Canopy gaps in Woodland-1, the beaver-influenced site."><img src="thumbs/u-w1.webp" width="720" height="510" alt="Figure 1a. Canopy gaps in Woodland-1, the beaver-influenced site." loading="lazy" decoding="async"></button><figcaption>Figure 1a. Canopy gaps in Woodland-1, the beaver-influenced site.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/u-w2.webp" data-thumb="thumbs/u-w2.webp" data-w="1697" data-h="1202" aria-label="Enlarge: Figure 1b. Canopy gaps in Woodland-2, with no beavers."><img src="thumbs/u-w2.webp" width="720" height="510" alt="Figure 1b. Canopy gaps in Woodland-2, with no beavers." loading="lazy" decoding="async"></button><figcaption>Figure 1b. Canopy gaps in Woodland-2, with no beavers.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/u-top1.webp" data-thumb="thumbs/u-top1.webp" data-w="1754" data-h="1240" aria-label="Enlarge: Figure 2a. The three largest canopy gaps in Woodland-1."><img src="thumbs/u-top1.webp" width="720" height="509" alt="Figure 2a. The three largest canopy gaps in Woodland-1." loading="lazy" decoding="async"></button><figcaption>Figure 2a. The three largest canopy gaps in Woodland-1.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/u-top2.webp" data-thumb="thumbs/u-top2.webp" data-w="1757" data-h="1240" aria-label="Enlarge: Figure 2b. The three largest canopy gaps in Woodland-2."><img src="thumbs/u-top2.webp" width="720" height="508" alt="Figure 2b. The three largest canopy gaps in Woodland-2." loading="lazy" decoding="async"></button><figcaption>Figure 2b. The three largest canopy gaps in Woodland-2.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/u-felling.webp" data-thumb="thumbs/u-felling.webp" data-w="610" data-h="910" aria-label="Enlarge: Figure A. Tree felling and local flooding associated with beaver activity in Woodland-1."><img src="thumbs/u-felling.webp" width="603" height="900" alt="Figure A. Tree felling and local flooding associated with beaver activity in Woodland-1." loading="lazy" decoding="async"></button><figcaption>Figure A. Tree felling and local flooding associated with beaver activity in Woodland-1.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/u-dam.webp" data-thumb="thumbs/u-dam.webp" data-w="720" data-h="907" aria-label="Enlarge: Figure B. Beaver dam and woody debris."><img src="thumbs/u-dam.webp" width="476" height="600" alt="Figure B. Beaver dam and woody debris." loading="lazy" decoding="async"></button><figcaption>Figure B. Beaver dam and woody debris.</figcaption></figure></div></section><nav class="case-foot" aria-label="More projects"><button type="button" class="icon-btn" data-go-label="prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 12H5M11 6l-6 6 6 6"/></svg><span></span></button><button type="button" class="icon-btn" data-go-label="next"><span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button></nav></div></article><article class="case-src" id="greenspace" data-title="Where Greater Manchester needs green space most" hidden><div class="wrap case-inner"><header class="case-head"><div class="case-meta"><span class="label" style="display:inline-flex;gap:.45rem;align-items:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6.5 11 3l9 4.5-1.5 11L9 21l-6-5z"/><path d="M5.5 15 15 5.8M8 18.5l10.6-9.7M3.8 11 11 4.2"/></svg>Suitability modelling</span><span class="label">Jan 2026</span></div><h2>Priority locations for green space interventions in Greater Manchester</h2><p class="lead">Green space does the most for health where children and deprivation are concentrated, but access and greenness are uneven across the city. I combined four layers into one suitability model to show where green space interventions would do the most good.</p><div class="case-links"><a class="btn btn-primary btn-sm" href="reports/greenspace-priority-greater-manchester.pdf" target="_blank" rel="noopener">Read the report (PDF, 3 MB) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h7"/></svg></a></div></header><div class="case-stats stats"><div><b>4</b><span>criteria combined, each normalised to 0–1</span></div><div><b>5</b><span>suitability classes, from Very Low to Very High</span></div><div><b>0.395</b><span>mean LSOA suitability (range 0.138 to 0.637)</span></div><div><b>10 m</b><span>Sentinel-2 NDVI resolution</span></div></div><div class="case-cols"><div class="case-body"><section><h3>The question</h3><p class="q">Where within Greater Manchester should green space interventions be targeted to give the greatest benefit, especially for children and deprived neighbourhoods?</p></section><section><h3>Data</h3><ul class="findings" style="gap:.4rem"><li style="padding-left:1.4rem">OS Open Greenspace (2024)</li><li style="padding-left:1.4rem">Sentinel-2 bands 4 and 8 for NDVI, 10 m</li><li style="padding-left:1.4rem">Index of Multiple Deprivation 2019</li><li style="padding-left:1.4rem">Census 2021 child population (TS007A)</li><li style="padding-left:1.4rem">LSOA 2011 boundaries and the OpenPopGrid population grid</li></ul></section><section><h3>What I did</h3><ol class="steps"><li><span>Turned distance to the nearest public green space into an access-deficit layer.</span></li><li><span>Calculated NDVI from Sentinel-2 bands 4 and 8 and inverted it, so low vegetation scores as high need.</span></li><li><span>Normalised deprivation and child population to 0–1 alongside the two environmental layers.</span></li><li><span>Combined the four layers with a weighted linear model, giving deprivation and children the higher weights to put equity first.</span></li><li><span>Classified the surface into five classes, extracted the Very High zones and aggregated scores to LSOAs with zonal statistics.</span></li></ol></section><section><h3>What I found</h3><ul class="findings"><li>High suitability clusters in inner-urban Manchester and neighbouring boroughs, where poor access and low vegetation coincide with deprivation and more children.</li><li>The priority areas are not simply the places with the least green space. They are where several disadvantages overlap.</li><li>Mean suitability by LSOA ranged from 0.138 to 0.637, with a mean of 0.395 and a median of 0.406.</li></ul></section><section><h3>Limits I flagged</h3><ul class="limits"><li>Straight-line distance overstates access where railways, rivers or main roads get in the way. Network walking distance would be the next step.</li><li>NDVI is from a single date, the data come from different years, and the weights were not sensitivity-tested.</li></ul></section></div><aside class="case-side"><div class="side-box"><h4>Report</h4><a class="btn btn-primary btn-sm" href="reports/greenspace-priority-greater-manchester.pdf" target="_blank" rel="noopener">Read the report (PDF, 3 MB) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h7"/></svg></a></div><div class="side-box"><h4>At a glance</h4><ul><li><span class="label" style="display:block">Context</span>MSc coursework, GIS and Environmental Applications</li><li><span class="label" style="display:block">Where</span>Greater Manchester city region</li><li><span class="label" style="display:block">Unit</span>Lower Layer Super Output Areas</li><li><span class="label" style="display:block">When</span>January 2026</li></ul></div><div class="side-box"><h4>Tools & methods</h4><ul><li>ArcGIS Pro</li><li>Weighted linear combination</li><li>Raster calculator</li><li>Zonal statistics</li></ul></div><div class="side-box"><h4>Coordinate reference</h4><p>British National Grid (EPSG:27700)</p></div></aside></div><section class="figs"><h3>Maps and figures · select any to enlarge and zoom</h3><div class="fig-grid"><figure class="fig"><button type="button" data-full="maps/g-classified.webp" data-thumb="thumbs/g-classified.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Figure 3.4. Classified suitability for green intervention, five classes."><img src="thumbs/g-classified.webp" width="720" height="509" alt="Figure 3.4. Classified suitability for green intervention, five classes." loading="lazy" decoding="async"></button><figcaption>Figure 3.4. Classified suitability for green intervention, five classes.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/g-priority.webp" data-thumb="thumbs/g-priority.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Figure 3.5. Highest-priority zones (Very High suitability) against existing public green space."><img src="thumbs/g-priority.webp" width="720" height="509" alt="Figure 3.5. Highest-priority zones (Very High suitability) against existing public green space." loading="lazy" decoding="async"></button><figcaption>Figure 3.5. Highest-priority zones (Very High suitability) against existing public green space.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/g-composite.webp" data-thumb="thumbs/g-composite.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Figure 3.3. Continuous composite suitability surface."><img src="thumbs/g-composite.webp" width="720" height="509" alt="Figure 3.3. Continuous composite suitability surface." loading="lazy" decoding="async"></button><figcaption>Figure 3.3. Continuous composite suitability surface.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/g-lsoa.webp" data-thumb="thumbs/g-lsoa.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Figure 3.6. Mean composite suitability by LSOA, from zonal statistics."><img src="thumbs/g-lsoa.webp" width="720" height="509" alt="Figure 3.6. Mean composite suitability by LSOA, from zonal statistics." loading="lazy" decoding="async"></button><figcaption>Figure 3.6. Mean composite suitability by LSOA, from zonal statistics.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/g-child.webp" data-thumb="thumbs/g-child.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Figure 3.7. Child population within the highest-priority LSOAs."><img src="thumbs/g-child.webp" width="720" height="509" alt="Figure 3.7. Child population within the highest-priority LSOAs." loading="lazy" decoding="async"></button><figcaption>Figure 3.7. Child population within the highest-priority LSOAs.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/g-access.webp" data-thumb="thumbs/g-access.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Figure 3.1. Distance-based green space access deficit."><img src="thumbs/g-access.webp" width="720" height="509" alt="Figure 3.1. Distance-based green space access deficit." loading="lazy" decoding="async"></button><figcaption>Figure 3.1. Distance-based green space access deficit.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/g-veg.webp" data-thumb="thumbs/g-veg.webp" data-w="2000" data-h="1414" aria-label="Enlarge: Figure 3.2. NDVI-derived vegetation deficit from Sentinel-2."><img src="thumbs/g-veg.webp" width="720" height="509" alt="Figure 3.2. NDVI-derived vegetation deficit from Sentinel-2." loading="lazy" decoding="async"></button><figcaption>Figure 3.2. NDVI-derived vegetation deficit from Sentinel-2.</figcaption></figure></div></section><nav class="case-foot" aria-label="More projects"><button type="button" class="icon-btn" data-go-label="prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 12H5M11 6l-6 6 6 6"/></svg><span></span></button><button type="button" class="icon-btn" data-go-label="next"><span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button></nav></div></article><article class="case-src" id="valencia" data-title="Mapping the 2024 Valencia flood with Sentinel-1 radar" hidden><div class="wrap case-inner"><header class="case-head"><div class="case-meta"><span class="label" style="display:inline-flex;gap:.45rem;align-items:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="17" height="17"/><path d="M9.2 3.5v17M14.8 3.5v17M3.5 9.2h17M3.5 14.8h17"/><rect x="9.2" y="9.2" width="5.6" height="5.6" fill="currentColor" stroke="none"/><rect x="14.8" y="3.5" width="5.7" height="5.7" fill="currentColor" stroke="none" opacity=".45"/></svg>SAR flood mapping</span><span class="label">Jun 2026</span></div><h2>Mapping the October 2024 Valencia flood with Sentinel-1 radar</h2><p class="lead">Cloud and darkness block optical satellites during a flood, but radar sees through both. I tested how much of the October 2024 Valencia flood a simple Sentinel-1 change-detection workflow could recover, against the official Copernicus emergency map.</p></header><div class="case-stats stats"><div><b>35.62 km²</b><span>of strong backscatter decrease detected</span></div><div><b>34.90 km²</b><span>of it inside the official flooded area</span></div><div><b>22.8%</b><span>of the official flooded area captured</span></div><div><b>156.12 km²</b><span>flooded area in the Copernicus product</span></div></div><div class="case-cols"><div class="case-body"><section><h3>The question</h3><p class="q">How well does a simple Sentinel-1 backscatter change-detection approach identify flood-related change, compared with the Copernicus EMS delineation?</p></section><section><h3>Data</h3><ul class="findings" style="gap:.4rem"><li style="padding-left:1.4rem">Sentinel-1 GRD, VV and VH, 19 and 31 October 2024</li><li style="padding-left:1.4rem">Copernicus EMS EMSR773, AOI01 Valencia Province (flooded area and flood trace)</li></ul></section><section><h3>What I did</h3><ol class="steps"><li><span>Matched Sentinel-1 GRD scenes from before and after the event in Google Earth Engine, keeping orbit conditions and VV/VH polarisations consistent.</span></li><li><span>Smoothed speckle, converted from decibels to power and built a combined pre/post backscatter-decrease ratio.</span></li><li><span>Thresholded the ratio into a change mask and compared it with the Copernicus flooded-area and flood-trace polygons.</span></li></ol></section><section><h3>What I found</h3><ul class="findings"><li>Copernicus mapped 156.12 km² of flooded area and 374.28 km² of flood trace.</li><li>My mask found 35.62 km² of strong backscatter decrease, and 34.90 km² of it fell inside the official flooded area, so what it detected was almost all real.</li><li>It captured only about 22.8% of the official flooded area and under 10% of the flood trace. Urban flooding was the hard part.</li></ul></section><section><h3>Limits I flagged</h3><ul class="limits"><li>Buildings, vegetation and mixed surfaces hide or distort the flood signal, so the mask is a high-confidence open-water layer, not a complete flood map.</li></ul></section></div><aside class="case-side"><div class="side-box"><h4>Report</h4><p>The A1 poster is available on request.</p></div><div class="side-box"><h4>At a glance</h4><ul><li><span class="label" style="display:block">Context</span>MSc coursework (poster)</li><li><span class="label" style="display:block">Where</span>Valencia Province, Spain</li><li><span class="label" style="display:block">Event</span>Flood of October 2024, Copernicus EMSR773</li><li><span class="label" style="display:block">When</span>June 2026</li></ul></div><div class="side-box"><h4>Tools & methods</h4><ul><li>Google Earth Engine</li><li>Sentinel-1 GRD</li><li>Change detection</li><li>Copernicus EMS</li></ul></div></aside></div><section class="figs"><h3>Maps and figures · select any to enlarge and zoom</h3><div class="fig-grid"><figure class="fig"><button type="button" data-full="maps/s-compare.webp" data-thumb="thumbs/s-compare.webp" data-w="1754" data-h="1240" aria-label="Enlarge: Figure 3. The Sentinel-1 change mask from Earth Engine (magenta) against the official Copernicus flood delineation."><img src="thumbs/s-compare.webp" width="720" height="509" alt="Figure 3. The Sentinel-1 change mask from Earth Engine (magenta) against the official Copernicus flood delineation." loading="lazy" decoding="async"></button><figcaption>Figure 3. The Sentinel-1 change mask from Earth Engine (magenta) against the official Copernicus flood delineation.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/s-cems.webp" data-thumb="thumbs/s-cems.webp" data-w="1404" data-h="992" aria-label="Enlarge: Figure 1. Copernicus EMS flooded area and flood trace, AOI01 Valencia Province."><img src="thumbs/s-cems.webp" width="720" height="509" alt="Figure 1. Copernicus EMS flooded area and flood trace, AOI01 Valencia Province." loading="lazy" decoding="async"></button><figcaption>Figure 1. Copernicus EMS flooded area and flood trace, AOI01 Valencia Province.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/s-pre.webp" data-thumb="thumbs/s-pre.webp" data-w="1053" data-h="744" aria-label="Enlarge: Figure 2a. Sentinel-1 VH backscatter before the event, 19 October 2024."><img src="thumbs/s-pre.webp" width="720" height="509" alt="Figure 2a. Sentinel-1 VH backscatter before the event, 19 October 2024." loading="lazy" decoding="async"></button><figcaption>Figure 2a. Sentinel-1 VH backscatter before the event, 19 October 2024.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/s-post.webp" data-thumb="thumbs/s-post.webp" data-w="1053" data-h="744" aria-label="Enlarge: Figure 2b. Sentinel-1 VH backscatter after the event, 31 October 2024."><img src="thumbs/s-post.webp" width="720" height="509" alt="Figure 2b. Sentinel-1 VH backscatter after the event, 31 October 2024." loading="lazy" decoding="async"></button><figcaption>Figure 2b. Sentinel-1 VH backscatter after the event, 31 October 2024.</figcaption></figure></div></section><nav class="case-foot" aria-label="More projects"><button type="button" class="icon-btn" data-go-label="prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 12H5M11 6l-6 6 6 6"/></svg><span></span></button><button type="button" class="icon-btn" data-go-label="next"><span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button></nav></div></article><article class="case-src" id="python" data-title="Spatial algorithms in Python" hidden><div class="wrap case-inner"><header class="case-head"><div class="case-meta"><span class="label" style="display:inline-flex;gap:.45rem;align-items:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M13.5 4l-3 16"/></svg>Python</span><span class="label">Nov 2025 – Jan 2026</span></div><h2>Spatial algorithms in Python: geodesic borders and weighted redistribution</h2><p class="lead">Two problems solved in code rather than by clicking through a GIS: a scalable search for the world’s shortest international border, and an implementation of weighted redistribution that turns badly geocoded points into an honest surface.</p><div class="case-links"><a class="btn btn-primary btn-sm" href="reports/shortest-border-python.pdf" target="_blank" rel="noopener">Shortest international border report (PDF) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h7"/></svg></a><a class="btn btn-primary btn-sm" href="reports/weighted-redistribution-python.pdf" target="_blank" rel="noopener">Weighted redistribution of geocoded tweets report (PDF) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h7"/></svg></a></div></header><div class="case-stats stats"><div><b>0.43 km</b><span>Italy–Vatican City, the shortest border found</span></div><div><b>w = 50, s = 0.05</b><span>redistribution parameters chosen after a sweep</span></div><div><b>EPSG:27700</b><span>metric grid for the redistribution</span></div></div><div class="case-cols"><div class="case-body"><section class="case-part"><span class="label">November 2025</span><h4>Shortest international border</h4><p>I wrote an algorithm to find the shortest land border in the Natural Earth country polygons (ne_10m_admin_0_countries).</p><ol class="steps" style="margin-top:1.2rem"><li><span>Loaded the countries into a GeoDataFrame and built an STRtree spatial index, so only pairs whose bounding boxes overlap are tested instead of every possible pair.</span></li><li><span>Used geometry intersection to separate real shared borders (lines) from single-point touches, which are excluded.</span></li><li><span>Measured each border as a geodesic length on the WGS84 ellipsoid with pyproj’s Geod, because projected distance would understate it.</span></li><li><span>Mapped the result in a Lambert conformal conic projection with GeoPandas and Matplotlib.</span></li></ol><ul class="findings" style="margin-top:1.2rem"><li>Italy–Vatican City, at 0.43 km, is the shortest international border in the dataset.</li></ul></section><section class="case-part"><span class="label">January 2026</span><h4>Weighted redistribution of geocoded tweets</h4><p>Tweets geocoded only to their district stack up on the same points and create false hotspots. I implemented Huck et al.’s weighted redistribution to relocate each tweet within its own district, guided by population density, and turn the points into a continuous surface.</p><ol class="steps" style="margin-top:1.2rem"><li><span>Projected everything to British National Grid so areas and radii work in metres.</span></li><li><span>Generated candidate locations inside each district by bounding-box rejection sampling, so no tweet can leave its own district.</span></li><li><span>Scored w candidates against a population raster and kept the densest, then spread each tweet as a fuzzy splat whose radius comes from district area and the fuzziness parameter s.</span></li><li><span>Swept s ∈ {0.03, 0.05} and w ∈ {25, 50, 100} and chose w = 50, s = 0.05 as the balance between random scatter and over-peaked surfaces.</span></li></ol><pre class="code"><code><span class="k">def</span> relocate_weighted(point, polygon, raster, w):
+    best, best_val = None, -1
+    <span class="k">for</span> _ <span class="k">in</span> range(w):
+        cand = random_point_in_polygon(polygon)
+        val = raster_value(cand, raster)
+        <span class="k">if</span> val &gt; best_val:
+            best_val, best = val, cand
+    <span class="k">return</span> best</code></pre><ul class="findings" style="margin-top:1.2rem"><li>The false district-centroid hotspots disappear, and the surface follows population while respecting district boundaries.</li></ul></section><section><h3>Limits I flagged</h3><ul class="limits"><li>Natural Earth borders are generalised, so 0.43 km reflects the dataset rather than a surveyed border.</li><li>Redistribution treats population as the only proxy for tweeting, results vary between runs unless a seed is fixed, and parameters were chosen by visual checks.</li></ul></section></div><aside class="case-side"><div class="side-box"><h4>Report</h4><a class="btn btn-primary btn-sm" href="reports/shortest-border-python.pdf" target="_blank" rel="noopener">Shortest international border report (PDF) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h7"/></svg></a><a class="btn btn-primary btn-sm" href="reports/weighted-redistribution-python.pdf" target="_blank" rel="noopener">Weighted redistribution of geocoded tweets report (PDF) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h7"/></svg></a></div><div class="side-box"><h4>At a glance</h4><ul><li><span class="label" style="display:block">Context</span>MSc coursework, Understanding GIS</li><li><span class="label" style="display:block">Language</span>Python</li><li><span class="label" style="display:block">When</span>November 2025 and January 2026</li></ul></div><div class="side-box"><h4>Tools & methods</h4><ul><li>Python</li><li>GeoPandas</li><li>Shapely (STRtree)</li><li>pyproj (Geod)</li><li>rasterio</li><li>Matplotlib</li></ul></div><div class="side-box"><h4>Coordinate reference</h4><p>WGS84 for measurement; Lambert conformal conic and British National Grid for mapping</p></div></aside></div><section class="figs"><h3>Maps and figures · select any to enlarge and zoom</h3><div class="fig-grid"><figure class="fig"><button type="button" data-full="maps/b-map.webp" data-thumb="thumbs/b-map.webp" data-w="997" data-h="1173" aria-label="Enlarge: The shortest international border found: Italy–Vatican City, 0.43 km."><img src="thumbs/b-map.webp" width="720" height="847" alt="The shortest international border found: Italy–Vatican City, 0.43 km." loading="lazy" decoding="async"></button><figcaption>The shortest international border found: Italy–Vatican City, 0.43 km.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/b-flow.webp" data-thumb="thumbs/b-flow.webp" data-w="1379" data-h="139" aria-label="Enlarge: Workflow for the border algorithm: input, spatial index, neighbour pairs, geometry analysis, geodesic calculation, shortest border, map output."><img src="thumbs/b-flow.webp" width="720" height="73" alt="Workflow for the border algorithm: input, spatial index, neighbour pairs, geometry analysis, geodesic calculation, shortest border, map output." loading="lazy" decoding="async"></button><figcaption>Workflow for the border algorithm: input, spatial index, neighbour pairs, geometry analysis, geodesic calculation, shortest border, map output.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/t-raw.webp" data-thumb="thumbs/t-raw.webp" data-w="1539" data-h="1079" aria-label="Enlarge: Figure 1. Raw tweets geocoded at district level, piling onto the same points."><img src="thumbs/t-raw.webp" width="720" height="505" alt="Figure 1. Raw tweets geocoded at district level, piling onto the same points." loading="lazy" decoding="async"></button><figcaption>Figure 1. Raw tweets geocoded at district level, piling onto the same points.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/t-final.webp" data-thumb="thumbs/t-final.webp" data-w="2000" data-h="1103" aria-label="Enlarge: Figure 4. Final weighted redistribution surface (w = 50, s = 0.05)."><img src="thumbs/t-final.webp" width="720" height="397" alt="Figure 4. Final weighted redistribution surface (w = 50, s = 0.05)." loading="lazy" decoding="async"></button><figcaption>Figure 4. Final weighted redistribution surface (w = 50, s = 0.05).</figcaption></figure><figure class="fig"><button type="button" data-full="maps/t-s03.webp" data-thumb="thumbs/t-s03.webp" data-w="1399" data-h="900" aria-label="Enlarge: Figure 2. Parameter sweep: w = 25, s = 0.03."><img src="thumbs/t-s03.webp" width="720" height="463" alt="Figure 2. Parameter sweep: w = 25, s = 0.03." loading="lazy" decoding="async"></button><figcaption>Figure 2. Parameter sweep: w = 25, s = 0.03.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/t-s05.webp" data-thumb="thumbs/t-s05.webp" data-w="1405" data-h="974" aria-label="Enlarge: Figure 2. Parameter sweep: w = 25, s = 0.05."><img src="thumbs/t-s05.webp" width="720" height="499" alt="Figure 2. Parameter sweep: w = 25, s = 0.05." loading="lazy" decoding="async"></button><figcaption>Figure 2. Parameter sweep: w = 25, s = 0.05.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/t-w50.webp" data-thumb="thumbs/t-w50.webp" data-w="979" data-h="603" aria-label="Enlarge: Figure 3. Parameter sweep: w = 50, s = 0.03."><img src="thumbs/t-w50.webp" width="720" height="443" alt="Figure 3. Parameter sweep: w = 50, s = 0.03." loading="lazy" decoding="async"></button><figcaption>Figure 3. Parameter sweep: w = 50, s = 0.03.</figcaption></figure><figure class="fig"><button type="button" data-full="maps/t-w100.webp" data-thumb="thumbs/t-w100.webp" data-w="979" data-h="631" aria-label="Enlarge: Figure 3. Parameter sweep: w = 100, s = 0.03."><img src="thumbs/t-w100.webp" width="720" height="464" alt="Figure 3. Parameter sweep: w = 100, s = 0.03." loading="lazy" decoding="async"></button><figcaption>Figure 3. Parameter sweep: w = 100, s = 0.03.</figcaption></figure></div></section><nav class="case-foot" aria-label="More projects"><button type="button" class="icon-btn" data-go-label="prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 12H5M11 6l-6 6 6 6"/></svg><span></span></button><button type="button" class="icon-btn" data-go-label="next"><span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button></nav></div></article></div>
+
+<dialog class="case" id="case" aria-label="Project case study">
+  <div class="case-bar">
+    <div class="wrap">
+      <button type="button" class="icon-btn back" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 12H5M11 6l-6 6 6 6"/></svg><span>All work</span></button>
+      <span class="label" id="case-pos"></span>
+      <div class="case-nav">
+        <button type="button" class="icon-btn" id="case-prev" aria-label="Previous project"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 12H5M11 6l-6 6 6 6"/></svg></button>
+        <button type="button" class="icon-btn" id="case-next" aria-label="Next project"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+        <button type="button" class="icon-btn" data-close aria-label="Close case study"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+    </div>
+  </div>
+  <div id="case-mount"></div>
+</dialog>
+
+<dialog class="lightbox" id="lightbox" aria-label="Map viewer">
+  <div class="lb-stage" id="lb-stage"><img id="lb-img" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" draggable="false"></div>
+  <p class="lb-hint">Scroll or pinch to zoom · drag to pan</p>
+  <p class="lb-loading" id="lb-loading" hidden>Loading full resolution…</p>
+  <div class="lb-bar">
+    <p class="lb-cap" id="lb-cap"></p>
+    <div class="lb-tools">
+      <span class="label" id="lb-count" style="align-self:center;margin-right:.4rem;color:var(--dust)"></span>
+      <button type="button" id="lb-out" aria-label="Zoom out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5M8.2 11h5.6"/></svg></button>
+      <button type="button" id="lb-in" aria-label="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5M11 8.2v5.6M8.2 11h5.6"/></svg></button>
+      <button type="button" id="lb-reset" aria-label="Reset zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 4v6h6"/><path d="M4.6 14.5A8 8 0 1 0 6 7l-2 3"/></svg></button>
+      <button type="button" id="lb-prev" aria-label="Previous figure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 12H5M11 6l-6 6 6 6"/></svg></button>
+      <button type="button" id="lb-next" aria-label="Next figure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+      <button type="button" id="lb-close" aria-label="Close viewer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+  </div>
+</dialog>
+
+<script>(function(){
+  'use strict';
+  var doc=document, root=doc.documentElement;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function $(s,c){return (c||doc).querySelector(s)}
+  function $$(s,c){return Array.prototype.slice.call((c||doc).querySelectorAll(s))}
+  function setHash(h){try{history.replaceState(null,'',h?('#'+h):(location.pathname+location.search))}catch(e){}}
+
+  /* ---------- header: stuck + dark-band awareness ---------- */
+  var head=$('#site-head'), darkBands=$$('.on-mocha,.on-loam,.on-night').filter(function(el){return el!==head});
+  function onScroll(){
+    head.classList.toggle('is-stuck',window.scrollY>8);
+    var probe=head.getBoundingClientRect().bottom+1, dark=false;
+    for(var i=0;i<darkBands.length;i++){var r=darkBands[i].getBoundingClientRect();if(r.top<=probe&&r.bottom>probe){dark=true;break}}
+    head.classList.toggle('is-dark',dark);
+  }
+  var ticking=false;
+  window.addEventListener('scroll',function(){if(ticking)return;ticking=true;requestAnimationFrame(function(){ticking=false;onScroll()})},{passive:true});
+  window.addEventListener('resize',onScroll,{passive:true});
+  onScroll();
+
+  /* ---------- mobile menu ---------- */
+  var menuBtn=$('#menu-btn'), mnav=$('#mobile-nav');
+  function setMenu(open){menuBtn.setAttribute('aria-expanded',String(open));mnav.hidden=!open;$('#menu-label').textContent=open?'Close':'Menu'}
+  menuBtn.addEventListener('click',function(){setMenu(menuBtn.getAttribute('aria-expanded')!=='true')});
+  $$('a',mnav).forEach(function(a){a.addEventListener('click',function(){setMenu(false)})});
+
+  /* ---------- project filters ---------- */
+  var chips=$$('.chip'), cards=$$('[data-tags]'), countEl=$('#work-count');
+  function applyFilter(f){
+    var n=0;
+    cards.forEach(function(c){var show=f==='all'||c.getAttribute('data-tags').split(' ').indexOf(f)>-1;c.hidden=!show;if(show)n++});
+    chips.forEach(function(ch){ch.setAttribute('aria-pressed',String(ch.getAttribute('data-filter')===f))});
+    countEl.textContent=n===1?'Showing 1 project':'Showing '+n+' projects';
+    $('#work-empty').hidden=n>0;
+  }
+  chips.forEach(function(ch){ch.addEventListener('click',function(){applyFilter(ch.getAttribute('data-filter'))})});
+
+  /* ---------- case-study dialog ---------- */
+  var caseDlg=$('#case'), caseMount=$('#case-mount'), order=$$('.case-src').map(function(a){return a.id});
+  var current=null, lastFocus=null;
+  function openCase(id,push){
+    var src=doc.getElementById(id); if(!src||!src.classList.contains('case-src')) return false;
+    current=id;
+    caseMount.innerHTML='';
+    var node=src.cloneNode(true); node.removeAttribute('id'); node.hidden=false; node.classList.remove('case-src'); caseMount.appendChild(node);
+    var i=order.indexOf(id);
+    $('#case-pos').textContent='Project '+String(i+1).padStart(2,'0')+' / '+String(order.length).padStart(2,'0');
+    var prev=order[(i-1+order.length)%order.length], next=order[(i+1)%order.length];
+    $('#case-prev').setAttribute('data-go',prev); $('#case-next').setAttribute('data-go',next);
+    $$('[data-go-label="prev"]',caseMount).forEach(function(b){b.setAttribute('data-go',prev);b.querySelector('span').textContent=titleOf(prev)});
+    $$('[data-go-label="next"]',caseMount).forEach(function(b){b.setAttribute('data-go',next);b.querySelector('span').textContent=titleOf(next)});
+    wireFigures();
+    if(!caseDlg.open){lastFocus=doc.activeElement;if(caseDlg.showModal)caseDlg.showModal();else caseDlg.setAttribute('open','');root.style.overflow='hidden'}
+    caseDlg.scrollTop=0;
+    var h=$('h2',caseMount); if(h){h.setAttribute('tabindex','-1');h.focus({preventScroll:true})}
+    if(push!==false) setHash(id);
+    return true;
+  }
+  function titleOf(id){var s=doc.getElementById(id);return s?s.getAttribute('data-title'):''}
+  function closeCase(){
+    if(caseDlg.open){if(caseDlg.close)caseDlg.close();else caseDlg.removeAttribute('open')}
+  }
+  caseDlg.addEventListener('close',function(){root.style.overflow='';current=null;setHash('');if(lastFocus&&lastFocus.focus)lastFocus.focus()});
+  caseDlg.addEventListener('click',function(e){
+    var go=e.target.closest('[data-go]'); if(go){e.preventDefault();openCase(go.getAttribute('data-go'));return}
+    if(e.target.closest('[data-close]')){e.preventDefault();closeCase()}
+  });
+  $$('[data-case]').forEach(function(a){a.addEventListener('click',function(e){
+    if(e.metaKey||e.ctrlKey||e.shiftKey) return;
+    if(openCase(a.getAttribute('data-case'))) e.preventDefault();
+  })});
+  function fromHash(){var h=(location.hash||'').slice(1); if(h&&order.indexOf(h)>-1) openCase(h,false)}
+  window.addEventListener('hashchange',fromHash);
+  fromHash();
+
+  /* ---------- lightbox with zoom + pan ---------- */
+  var lb=$('#lightbox'), stage=$('#lb-stage'), lbImg=$('#lb-img'), lbCap=$('#lb-cap'), lbCount=$('#lb-count');
+  var figs=[], fi=0, scale=1, tx=0, ty=0, pointers={}, startDist=0, startScale=1, last=null;
+  function wireFigures(){
+    figs=$$('.fig button',caseMount);
+    figs.forEach(function(b,i){
+      b.addEventListener('click',function(){openLb(i)});
+      var im=b.querySelector('img');
+      if(i<4){im.loading='eager'; if(i<2) im.setAttribute('fetchpriority','high')}
+      trackImg(im,b);
+    });
+  }
+  /* loading state: the placeholder shows until the map arrives; failed loads get a retry */
+  function trackImg(im,box){
+    function ok(){box.classList.add('is-loaded');box.classList.remove('is-error')}
+    function bad(){box.classList.add('is-error')}
+    if(im.complete&&im.naturalWidth){ok();return}
+    im.addEventListener('load',ok); im.addEventListener('error',bad);
+    box.addEventListener('click',function(e){
+      if(!box.classList.contains('is-error'))return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      box.classList.remove('is-error'); var u=im.getAttribute('src'); im.removeAttribute('src'); im.setAttribute('src',u);
+    },true);
+  }
+  $$('.card .thumb').forEach(function(t){var im=t.querySelector('img'); if(im) trackImg(im,t)});
+  function apply(){lbImg.style.transform='translate('+tx+'px,'+ty+'px) scale('+scale+')';$('#lb-out').disabled=scale<=1;$('#lb-reset').disabled=scale===1&&tx===0&&ty===0}
+  function reset(){scale=1;tx=0;ty=0;apply()}
+  function zoom(f,cx,cy){
+    var ns=Math.min(6,Math.max(1,scale*f)); if(ns===scale)return;
+    var r=stage.getBoundingClientRect(); cx=(cx==null?r.left+r.width/2:cx)-(r.left+r.width/2); cy=(cy==null?r.top+r.height/2:cy)-(r.top+r.height/2);
+    tx=cx-(cx-tx)*(ns/scale); ty=cy-(cy-ty)*(ns/scale); scale=ns; if(scale===1){tx=0;ty=0} apply();
+  }
+  function show(i){
+    fi=(i+figs.length)%figs.length; var b=figs[fi], im=b.querySelector('img');
+    /* show the thumbnail at once, then swap in the full-resolution map when it arrives */
+    var full=b.getAttribute('data-full'), want=fi;
+    lbImg.src=b.getAttribute('data-thumb'); lbImg.alt=im.alt;
+    lbImg.width=+b.getAttribute('data-w'); lbImg.height=+b.getAttribute('data-h');
+    var ld=$('#lb-loading'); ld.hidden=false;
+    var pre=new Image(); pre.decoding='async';
+    pre.onload=function(){if(fi===want){lbImg.src=full;ld.hidden=true}};
+    pre.onerror=function(){if(fi===want){ld.textContent='Full resolution unavailable · showing preview'}};
+    ld.textContent='Loading full resolution…'; pre.src=full;
+    lbCap.innerHTML=''; var l=doc.createElement('span'); l.className='label'; l.textContent=titleOf(current); lbCap.appendChild(l); lbCap.appendChild(doc.createTextNode(b.parentNode.querySelector('figcaption').textContent));
+    lbCount.textContent=(fi+1)+' / '+figs.length;
+    $('#lb-prev').disabled=$('#lb-next').disabled=figs.length<2;
+    reset();
+  }
+  function openLb(i){show(i); if(lb.showModal)lb.showModal();else lb.setAttribute('open',''); $('#lb-close').focus()}
+  function closeLb(){if(lb.open){if(lb.close)lb.close();else lb.removeAttribute('open')} var b=figs[fi]; if(b)b.focus()}
+  $('#lb-in').addEventListener('click',function(){zoom(1.5)});
+  $('#lb-out').addEventListener('click',function(){zoom(1/1.5)});
+  $('#lb-reset').addEventListener('click',reset);
+  $('#lb-prev').addEventListener('click',function(){show(fi-1)});
+  $('#lb-next').addEventListener('click',function(){show(fi+1)});
+  $('#lb-close').addEventListener('click',closeLb);
+  lb.addEventListener('cancel',function(e){e.preventDefault();closeLb()});
+  lb.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'){show(fi+1)} else if(e.key==='ArrowLeft'){show(fi-1)}
+    else if(e.key==='+'||e.key==='='){zoom(1.5)} else if(e.key==='-'){zoom(1/1.5)} else if(e.key==='0'){reset()}
+  });
+  stage.addEventListener('wheel',function(e){e.preventDefault();zoom(e.deltaY<0?1.2:1/1.2,e.clientX,e.clientY)},{passive:false});
+  stage.addEventListener('dblclick',function(e){if(scale>1)reset();else zoom(2.5,e.clientX,e.clientY)});
+  stage.addEventListener('pointerdown',function(e){
+    stage.setPointerCapture(e.pointerId); pointers[e.pointerId]={x:e.clientX,y:e.clientY};
+    var ids=Object.keys(pointers);
+    if(ids.length===2){var a=pointers[ids[0]],b=pointers[ids[1]];startDist=Math.hypot(a.x-b.x,a.y-b.y);startScale=scale}
+    last={x:e.clientX,y:e.clientY}; stage.classList.add('is-dragging');
+  });
+  stage.addEventListener('pointermove',function(e){
+    if(!pointers[e.pointerId])return; pointers[e.pointerId]={x:e.clientX,y:e.clientY};
+    var ids=Object.keys(pointers);
+    if(ids.length===2&&startDist){var a=pointers[ids[0]],b=pointers[ids[1]];var d=Math.hypot(a.x-b.x,a.y-b.y);var target=Math.min(6,Math.max(1,startScale*d/startDist));zoom(target/scale,(a.x+b.x)/2,(a.y+b.y)/2);return}
+    if(scale>1&&last){tx+=e.clientX-last.x;ty+=e.clientY-last.y;apply()}
+    last={x:e.clientX,y:e.clientY};
+  });
+  function up(e){delete pointers[e.pointerId]; if(Object.keys(pointers).length<2)startDist=0; if(!Object.keys(pointers).length){stage.classList.remove('is-dragging');last=null}}
+  stage.addEventListener('pointerup',up); stage.addEventListener('pointercancel',up);
+
+  /* ---------- email (assembled here so plain-text scrapers miss it) ---------- */
+  var addr=['dhananjaysmadaik','gmail.com'].join('@');
+  $$('[data-mail]').forEach(function(el){
+    if(el.tagName==='A'){el.href='mailto:'+addr} else {el.textContent=addr}
+  });
+  var copyBtn=$('#copy-mail');
+  if(copyBtn){copyBtn.addEventListener('click',function(){
+    function done(t){copyBtn.textContent=t;setTimeout(function(){copyBtn.textContent='Copy'},1800)}
+    function fallback(){var el=$('#mail-text'),r=doc.createRange();r.selectNodeContents(el);var s=getSelection();s.removeAllRanges();s.addRange(r);done('Selected')}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(addr).then(function(){done('Copied')},fallback)}else fallback();
+  })}
+  var yr=$('#year'); if(yr) yr.textContent=String(new Date().getFullYear());
+
+  /* ---------- hero: procedural contour map ---------- */
+  var cv=$('#contours');
+  function rng(seed){var a=seed>>>0;return function(){a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+  function noise(seed){
+    var r=rng(seed),p=new Uint8Array(512),q=[],i,j,t;for(i=0;i<256;i++)q[i]=i;
+    for(i=255;i>0;i--){j=(r()*(i+1))|0;t=q[i];q[i]=q[j];q[j]=t}for(i=0;i<512;i++)p[i]=q[i&255];
+    var gx=[1,-1,1,-1,1,-1,0,0],gy=[1,1,-1,-1,0,0,1,-1];
+    return function(x,y){var X=Math.floor(x),Y=Math.floor(y),xf=x-X,yf=y-Y;X&=255;Y&=255;
+      var u=xf*xf*xf*(xf*(xf*6-15)+10),v=yf*yf*yf*(yf*(yf*6-15)+10);
+      var a=p[p[X]+Y]&7,b=p[p[X+1]+Y]&7,c=p[p[X]+Y+1]&7,d=p[p[X+1]+Y+1]&7;
+      var n0=gx[a]*xf+gy[a]*yf,n1=gx[b]*(xf-1)+gy[b]*yf,n2=gx[c]*xf+gy[c]*(yf-1),n3=gx[d]*(xf-1)+gy[d]*(yf-1);
+      var x1=n0+u*(n1-n0),x2=n2+u*(n3-n2);return x1+v*(x2-x1)};
+  }
+  function drawContours(){
+    if(!cv||!cv.getContext)return;
+    var w=cv.clientWidth,h=cv.clientHeight,dpr=Math.min(2,window.devicePixelRatio||1);
+    if(!w||!h)return;
+    cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);
+    var ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+    var n1=noise(7),n2=noise(31),cell=w<700?7:9,cols=Math.ceil(w/cell)+1,rows=Math.ceil(h/cell)+1,F=new Float32Array(cols*rows);
+    var sc=2.6/Math.max(w,900);
+    for(var y=0;y<rows;y++)for(var x=0;x<cols;x++){
+      var u=x*cell*sc,v=y*cell*sc,wx=u+.45*n2(u*.6+4,v*.6+9),wy=v+.45*n2(u*.6+13,v*.6+2);
+      var e=.55*n1(wx,wy)+.28*n1(wx*2.1+5,wy*2.1+1)+.12*n1(wx*4.3+9,wy*4.3+7);
+      /* a valley running across the sheet, like the Satluj */
+      var vy=h*(.62+.12*Math.sin(x*cell/w*5.2+.8)+.05*Math.sin(x*cell/w*13.1)),dv=Math.abs(y*cell-vy)/h;
+      F[y*cols+x]=e+Math.min(1,dv*2.2)*.55;
+    }
+    var levels=22,minV=-.6,maxV=1.2,step=(maxV-minV)/levels;
+    function seg(lv){
+      ctx.beginPath();
+      for(var y=0;y<rows-1;y++)for(var x=0;x<cols-1;x++){
+        var a=F[y*cols+x],b=F[y*cols+x+1],c=F[(y+1)*cols+x+1],d=F[(y+1)*cols+x];
+        var idx=(a>lv?8:0)|(b>lv?4:0)|(c>lv?2:0)|(d>lv?1:0); if(idx===0||idx===15)continue;
+        var X=x*cell,Y=y*cell,t;
+        var pT=[X+cell*((lv-a)/(b-a)),Y],pR=[X+cell,Y+cell*((lv-b)/(c-b))],pB=[X+cell*((lv-d)/(c-d)),Y+cell],pL=[X,Y+cell*((lv-a)/(d-a))];
+        var L={1:[pL,pB],2:[pB,pR],3:[pL,pR],4:[pT,pR],5:[pL,pT,pB,pR],6:[pT,pB],7:[pL,pT],8:[pL,pT],9:[pT,pB],10:[pT,pR,pL,pB],11:[pT,pR],12:[pL,pR],13:[pB,pR],14:[pL,pB]}[idx];
+        for(var k=0;k<L.length;k+=2){ctx.moveTo(L[k][0],L[k][1]);ctx.lineTo(L[k+1][0],L[k+1][1])}
+      }
+      ctx.stroke();
+    }
+    for(var i=1;i<levels;i++){
+      var idxLine=i%5===0;
+      ctx.strokeStyle=idxLine?'rgba(229,228,226,.26)':'rgba(229,228,226,.11)';
+      ctx.lineWidth=idxLine?1.1:.8; seg(minV+i*step);
+    }
+    /* river along the valley floor */
+    ctx.beginPath();ctx.strokeStyle='rgba(159,214,236,.55)';ctx.lineWidth=1.6;
+    for(var px=0;px<=w;px+=6){var py=h*(.62+.12*Math.sin(px/w*5.2+.8)+.05*Math.sin(px/w*13.1));if(px===0)ctx.moveTo(px,py);else ctx.lineTo(px,py)}
+    ctx.stroke();
+    cv.classList.add('is-drawn');
+  }
+  if(cv){
+    var rz; window.addEventListener('resize',function(){clearTimeout(rz);rz=setTimeout(drawContours,180)},{passive:true});
+    (window.requestIdleCallback||function(f){return setTimeout(f,60)})(drawContours);
+  }
+})();
+</script>
+</body>
+</html>
